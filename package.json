@@ -1,0 +1,21 @@
+{
+  "name": "kata-template",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {},
+  "scripts": {
+    "jest": "yarn jest:unit",
+    "jest:unit": "jest --config jest.unit.config.js",
+    "vitest": "yarn vitest:unit",
+    "vitest:unit": "vitest --run --config vite.unit.config.js",
+    "test:all": "yarn jest && yarn vitest"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.22.20",
+    "@jest/globals": "^29.7.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "vitest": "^0.34.6"
+  }
+}
