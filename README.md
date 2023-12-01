@@ -1,6 +1,8 @@
 # Advent of Code 2023 - TDD Javascript
 
-Advent of Code 2023 is a yearly event where you solve a series of programming puzzles. This is the repo where I will be storing my solutions. The template this repo is based on is [here]().
+Advent of Code 2023 is a yearly event where you solve a series of programming puzzles. This is the repo where I will be storing my solutions.
+
+The magic template this repo is based on can be found [here](https://github.com/nlewis84/AdventOfTDD_JS).
 
 ### Prerequisites
 
@@ -22,6 +24,7 @@ This Template is already configured to work with both `jest` and `vitest` so fee
 ## Creating and Testing a Simple "Hello World" Program with Jest
 
 1. **Create a New Feature File:**
+
    - First, create a new JavaScript file in the `src` folder. For example, let's create a simple "Hello World" program.
    - Run the following command in your terminal to create the file:
      ```bash
@@ -29,16 +32,19 @@ This Template is already configured to work with both `jest` and `vitest` so fee
      ```
 
 2. **Write the "Hello World" Code:**
+
    - Open `src/helloWorld.js` in your editor and add the following code:
+
      ```javascript
      function helloWorld() {
-       return 'Hello World';
+       return "Hello World";
      }
 
      module.exports = helloWorld;
      ```
 
 3. **Create a Test File for the Feature:**
+
    - Next, create a test file in the `tests/unit` folder.
    - Ensure the directory exists and create the test file with these commands:
      ```bash
@@ -47,16 +53,19 @@ This Template is already configured to work with both `jest` and `vitest` so fee
      ```
 
 4. **Write the Test for "Hello World":**
-   - Open `tests/unit/helloWorld.test.js` in your editor and add the following test code:
-     ```javascript
-     const helloWorld = require('../../src/helloWorld');
 
-     test('says hello', () => {
-       expect(helloWorld()).toBe('Hello World');
+   - Open `tests/unit/helloWorld.test.js` in your editor and add the following test code:
+
+     ```javascript
+     const helloWorld = require("../../src/helloWorld");
+
+     test("says hello", () => {
+       expect(helloWorld()).toBe("Hello World");
      });
      ```
 
 5. **Run the Tests:**
+
    - To run the tests, use the Jest testing framework with the command `yarn jest`.
    - This command will run all test files in your project, including the new test for your "Hello World" program.
 
@@ -90,14 +99,14 @@ Runs all jest and vitest tests.
 
 ### `yarn format`
 
- - Format all the files in the project using [prettier](https://prettier.io/) 
- - Targets all files, except those in noted in the `.prettierignore` file
- - Applies the formatting rules in the `.prettierrc` file
+- Format all the files in the project using [prettier](https://prettier.io/)
+- Targets all files, except those in noted in the `.prettierignore` file
+- Applies the formatting rules in the `.prettierrc` file
 
 ### `yarn lint`
 
- - Lints all the files in the project using [ESLint](https://eslint.org/)
- - It targets all files, except those in noted in the `.eslintignore` file
- - Applies the linting rules in the `.eslintrc` file
- - Includes a caching mechanism to speed up subsequent lint runs
-     - Stores the cache in the `./node_modules/.cache/eslint` directory.
+- Lints all the files in the project using [ESLint](https://eslint.org/)
+- It targets all files, except those in noted in the `.eslintignore` file
+- Applies the linting rules in the `.eslintrc` file
+- Includes a caching mechanism to speed up subsequent lint runs
+  - Stores the cache in the `./node_modules/.cache/eslint` directory.
