@@ -2,7 +2,9 @@
   "name": "kata-template",
   "version": "0.1.0",
   "private": true,
-  "dependencies": { },
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  },
   "scripts": {
     "format": "prettier --write .",
     "jest": "yarn jest:unit",

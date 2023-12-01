@@ -1,95 +1,29 @@
-const fizzBuzz = (number) => {
-  let convertedNumber = '';
+const { aoc_input } = require("../../config");
+const fs = require("fs");
 
-  if (number % 3 === 0) {
-    convertedNumber += 'Fizz';
-  }
+// Part 1
+// On each line, return the first and last number and combine them to make a new 2 digit number
+// Add all these numbers together
 
-  if (number % 5 === 0) {
-    convertedNumber += 'Buzz';
-  }
+function part1(lines) {
+  let total = 0;
 
-  return convertedNumber || number;
-};
+  for (const line of lines) {
+    const numbers = line.match(/\d+/g);
+    if (numbers) {
+      const firstDigit = numbers[0].toString();
+      const lastDigit = numbers[numbers.length - 1].toString();
+      const combinedDigits = parseInt(firstDigit + lastDigit);
 
-const fizzBuzzTwo = (number) => {
-  const convertedNumber =
-    (number % 3 === 0 ? 'Fizz' : '') + (number % 5 === 0 ? 'Buzz' : '');
-  return convertedNumber || number;
-};
-
-const fizzBuzzThree = (number) => {
-  let wordArray = [];
-
-  if (number % 3 === 0) {
-    wordArray.push('Fizz');
-  }
-
-  if (number % 5 === 0) {
-    wordArray.push('Buzz');
-  }
-
-  return wordArray.length ? wordArray.join('') : number;
-};
-
-const fizzBuzzFour = (number) => {
-  let fizzBuzzObject = {
-    3: 'Fizz',
-    5: 'Buzz',
-  };
-
-  let convertedNumber = '';
-
-  for (let key in fizzBuzzObject) {
-    if (number % key === 0) {
-      convertedNumber += fizzBuzzObject[key];
+      total += combinedDigits;
     }
   }
 
-  return convertedNumber || number;
-};
+  return total;
+}
 
-const fizzBuzzFive = (number) => {
-  // I'm sorry to whoever reads this...
-  const WORD_ARRAY = ['Fizz', 'Buzz', 'FizzBuzz'];
-  let result = [];
+// Reading from file and running part1
+const lines = fs.readFileSync(aoc_input, "utf-8").split("\n");
+console.log(part1(lines));
 
-  for (let i = 1; i <= number; i++) {
-    let convertedNumber = '';
-    let fizzCount = 0;
-    let buzzCount = 0;
-
-    for (let j = 1; j <= i; j++) {
-      if (i % j === 0) {
-        if (j % 3 === 0) {
-          fizzCount++;
-        }
-        if (j % 5 === 0) {
-          buzzCount++;
-        }
-      }
-    }
-
-    if (fizzCount > 0 && buzzCount > 0) {
-      convertedNumber = WORD_ARRAY[2];
-    } else if (fizzCount > 0) {
-      convertedNumber = WORD_ARRAY[0];
-    } else if (buzzCount > 0) {
-      convertedNumber = WORD_ARRAY[1];
-    } else {
-      convertedNumber = i;
-    }
-
-    result.push(convertedNumber);
-  }
-
-  return result[number - 1];
-};
-
-module.exports = {
-  fizzBuzz,
-  fizzBuzzTwo,
-  fizzBuzzThree,
-  fizzBuzzFour,
-  fizzBuzzFive,
-};
+module.exports = { part1 };
