@@ -87,3 +87,17 @@ Runs all the vitests tests under the `unit` folder.
 ### `yarn test:all`
 
 Runs all jest and vitest tests.
+
+### `yarn format`
+
+ - Format all the files in the project using [prettier](https://prettier.io/) 
+ - Targets all files, except those in noted in the `.prettierignore` file
+ - Applies the formatting rules in the `.prettierrc` file
+
+### `yarn lint`
+
+ - Lints all the files in the project using [ESLint](https://eslint.org/)
+ - It targets all files, except those in noted in the `.eslintignore` file
+ - Applies the linting rules in the `.eslintrc` file
+ - Includes a caching mechanism to speed up subsequent lint runs
+     - Stores the cache in the `./node_modules/.cache/eslint` directory.
