@@ -1,6 +1,6 @@
-# kata-template-javascript
+# Advent of Code 2023 - TDD Javascript
 
-Starter template project to use for katas using javascript
+Advent of Code 2023 is a yearly event where you solve a series of programming puzzles. This is the repo where I will be storing my solutions. The template this repo is based on is [here]().
 
 ### Prerequisites
 
