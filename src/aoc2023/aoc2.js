@@ -3,8 +3,8 @@ const fs = require("fs");
 
 // Helper functions
 function parseGameData(data) {
-  // input is a string - Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
-  // output is [ { "blue": 3, "red": 4 }, { "red": 1, "green": 2, "blue": 6 }, { "green": 2 } ]
+  // Input: a string - Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+  // Output: ex: [ { "blue": 3, "red": 4 }, { "red": 1, "green": 2, "blue": 6 }, { "green": 2 } ]
   if (typeof data !== "string") {
     return [];
   }
@@ -37,7 +37,7 @@ function parseGameData(data) {
 
 function calculateMaxCubesPerColor(gameData) {
   // Input: output from parseGameData
-  // Output: object with max cubes per color
+  // Output: { "blue": 6, "red": 4, "green": 2 }
   const maxCubesPerColor = {};
 
   for (const game of gameData) {
@@ -49,6 +49,18 @@ function calculateMaxCubesPerColor(gameData) {
   }
 
   return maxCubesPerColor;
+}
+
+function isGamePossible(game, maxCubesPerColor) {
+  // Input: output calculateMaxCubesPerColor and { "red": 12, "green": 13, "blue": 14 }
+  // Output: Boolean
+  for (const [color, count] of Object.entries(game)) {
+    if (count > maxCubesPerColor[color]) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 // Part 1
@@ -70,4 +82,5 @@ module.exports = {
   // other functions
   parseGameData,
   calculateMaxCubesPerColor,
+  isGamePossible,
 };

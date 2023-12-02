@@ -3,6 +3,7 @@ const {
   part2,
   parseGameData,
   calculateMaxCubesPerColor,
+  isGamePossible,
 } = require("../../../src/aoc2023/aoc2");
 const { test, expect } = require("@jest/globals");
 
@@ -28,4 +29,11 @@ test("calculateMaxCubesPerColor", () => {
   const expectedResult = { blue: 6, red: 4, green: 2 };
 
   expect(calculateMaxCubesPerColor(mockData)).toEqual(expectedResult);
+});
+
+test("isGamePossible", () => {
+  const mockGame = { blue: 3, red: 4, green: 2 };
+  const mockMaxCubesPerColor = { blue: 6, red: 4, green: 2 };
+
+  expect(isGamePossible(mockGame, mockMaxCubesPerColor)).toBe(true);
 });
