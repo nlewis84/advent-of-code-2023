@@ -51,16 +51,37 @@ function calculateMaxCubesPerColor(gameData) {
   return maxCubesPerColor;
 }
 
-function isGamePossible(game, maxCubesPerColor) {
+function isGamePossible(game, gameRequirements) {
   // Input: output calculateMaxCubesPerColor and { "red": 12, "green": 13, "blue": 14 }
   // Output: Boolean
+  // Check to see if the calculatedMaxCubesPerColor is greater than or equal to the game requirements
   for (const [color, count] of Object.entries(game)) {
-    if (count > maxCubesPerColor[color]) {
+    if (count > gameRequirements[color]) {
       return false;
     }
-
-    return true;
   }
+
+  return true;
+}
+
+function sumPossibleGameIds(games, gameRequirements) {
+  // Input: string of multiple games that needs to be split by newline
+  // Output: sum of possible game ids
+  // For each line in the input, parse the game data
+  let total = 0;
+
+  for (const game of games.split("\n")) {
+    // game id is after the word Game and before the colon
+    const gameId = game.match(/Game (\d+):/)[1];
+    const gameData = parseGameData(game);
+    const maxCubesPerColor = calculateMaxCubesPerColor(gameData);
+
+    if (isGamePossible(maxCubesPerColor, gameRequirements)) {
+      total += parseInt(gameId, 10);
+    }
+  }
+
+  return total;
 }
 
 // Part 1
@@ -83,4 +104,5 @@ module.exports = {
   parseGameData,
   calculateMaxCubesPerColor,
   isGamePossible,
+  sumPossibleGameIds,
 };
