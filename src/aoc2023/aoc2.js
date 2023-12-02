@@ -69,7 +69,6 @@ function sumPossibleGameIds(games, gameRequirements) {
   // Output: sum of possible game ids
   // For each line in the input, parse the game data
   let total = 0;
-
   for (const game of games.split("\n")) {
     // game id is after the word Game and before the colon
     const gameId = game.match(/Game (\d+):/)[1];
@@ -86,7 +85,7 @@ function sumPossibleGameIds(games, gameRequirements) {
 
 // Part 1
 function part1(lines) {
-  return 0;
+  return sumPossibleGameIds(lines, { blue: 14, red: 12, green: 13 });
 }
 
 // Part 2
@@ -95,7 +94,8 @@ function part2(lines) {
 }
 
 // Reading from file and running both parts
-const lines = fs.readFileSync(aoc_input, "utf-8").split("\n");
+const lines = fs.readFileSync(aoc_input, "utf-8");
+console.log(part1(lines));
 
 module.exports = {
   part1,
