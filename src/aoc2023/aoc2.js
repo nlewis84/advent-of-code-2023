@@ -51,6 +51,18 @@ function calculateMaxCubesPerColor(gameData) {
   return maxCubesPerColor;
 }
 
+function calculatePowerOfCubes(gameData) {
+  // Input: { "blue": 6, "red": 4, "green": 2 }
+  // Output: blue * red * green
+  let product = 1;
+
+  for (const count of Object.values(gameData)) {
+    product *= count;
+  }
+
+  return product;
+}
+
 function isGamePossible(game, gameRequirements) {
   // Input: output calculateMaxCubesPerColor and { "red": 12, "green": 13, "blue": 14 }
   // Output: Boolean
@@ -83,6 +95,22 @@ function sumPossibleGameIds(games, gameRequirements) {
   return total;
 }
 
+function sumPowerOfGameSets(games) {
+  // Input: string of multiple games that needs to be split by newline
+  // Output: sum of Power of Game Sets
+  // For each line in the input, parse the game data
+  let total = 0;
+
+  for (const game of games.split("\n")) {
+    const gameData = parseGameData(game);
+    const minCubesPerColor = calculateMaxCubesPerColor(gameData);
+
+    total += calculatePowerOfCubes(minCubesPerColor);
+  }
+
+  return total;
+}
+
 // Part 1
 function part1(lines) {
   return sumPossibleGameIds(lines, { blue: 14, red: 12, green: 13 });
@@ -90,12 +118,13 @@ function part1(lines) {
 
 // Part 2
 function part2(lines) {
-  return 0;
+  return sumPowerOfGameSets(lines);
 }
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8");
-console.log(part1(lines));
+// console.log(part1(lines));
+// console.log(part2(lines));
 
 module.exports = {
   part1,
@@ -105,4 +134,6 @@ module.exports = {
   calculateMaxCubesPerColor,
   isGamePossible,
   sumPossibleGameIds,
+  calculatePowerOfCubes,
+  sumPowerOfGameSets,
 };
