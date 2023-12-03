@@ -1,6 +1,7 @@
 const {
   schematicToArray,
   isSymbol,
+  isAdjacentToSymbol,
   findNumberGroups,
 } = require("../../../src/aoc2023/aoc3");
 const { test, expect } = require("@jest/globals");
@@ -28,15 +29,16 @@ test("isSymbol returns true if cell is a symbol", () => {
   expect(isSymbol("$")).toBe(true);
 });
 
-test("findNumberGroups returns an array of number groups", () => {
+test("findNumberGroups returns an array of objects", () => {
   const mockSchematic = [
     ["1", "2", "3"],
     [".", ".", "*"],
-    [".", "4", "5"],
+    ["4", ".", "5"],
   ];
 
   const expectedResult = [
     {
+      adjacentToSymbol: true,
       number: "123",
       positions: [
         [0, 0],
@@ -45,13 +47,29 @@ test("findNumberGroups returns an array of number groups", () => {
       ],
     },
     {
-      number: "45",
-      positions: [
-        [2, 1],
-        [2, 2],
-      ],
+      adjacentToSymbol: true,
+      number: "5",
+      positions: [[2, 2]],
     },
   ];
 
   expect(findNumberGroups(mockSchematic)).toEqual(expectedResult);
+});
+
+test("isAdjacentToSymbol returns true if cell is adjacent to a symbol", () => {
+  const mockSchematic = [
+    ["1", "2", "3"],
+    [".", ".", "*"],
+    ["4", ".", "5"],
+  ];
+
+  expect(isAdjacentToSymbol(mockSchematic, 0, 0)).toBe(false);
+  expect(isAdjacentToSymbol(mockSchematic, 0, 1)).toBe(true);
+  expect(isAdjacentToSymbol(mockSchematic, 0, 2)).toBe(true);
+  expect(isAdjacentToSymbol(mockSchematic, 1, 0)).toBe(false);
+  expect(isAdjacentToSymbol(mockSchematic, 1, 1)).toBe(true);
+  expect(isAdjacentToSymbol(mockSchematic, 1, 2)).toBe(false);
+  expect(isAdjacentToSymbol(mockSchematic, 2, 0)).toBe(false);
+  expect(isAdjacentToSymbol(mockSchematic, 2, 1)).toBe(true);
+  expect(isAdjacentToSymbol(mockSchematic, 2, 2)).toBe(true);
 });

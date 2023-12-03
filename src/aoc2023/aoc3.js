@@ -18,54 +18,89 @@ function isSymbol(cell) {
 }
 
 function findNumberGroups(schematic) {
-  // Input: 2D array - ex: [ [ "1", "2", "3" ], [ ".", ".", "*" ], [ ".", ".", "." ] ]
-  // Output: an array of objects - ex: [ { number: '123', positions: [[0, 0], [0, 1], [0, 2]] } ]
-
   const numberGroups = [];
-  const visited = new Set();
 
-  // Number groups only go left to right
   for (let row = 0; row < schematic.length; row++) {
-    for (let col = 0; col < schematic[row].length; col++) {
+    let col = 0;
+    while (col < schematic[row].length) {
       const cell = schematic[row][col];
 
-      if (isSymbol(cell) || visited.has(`${row},${col}`)) {
-        continue;
-      }
+      if (/\d/.test(cell)) {
+        let number = "";
+        let currentCol = col;
+        let positions = [];
+        let adjacentToSymbol = false;
 
-      const numberGroup = {
-        number: "",
-        positions: [],
-      };
-
-      // Traverse the number group
-      let currentRow = row;
-      let currentCol = col;
-      while (currentCol < schematic[row].length) {
-        const currentCell = schematic[currentRow][currentCol];
-
-        if (isSymbol(currentCell)) {
-          break;
+        // Collect the complete number
+        while (
+          currentCol < schematic[row].length &&
+          /\d/.test(schematic[row][currentCol])
+        ) {
+          number += schematic[row][currentCol];
+          positions.push([row, currentCol]);
+          if (isAdjacentToSymbol(schematic, row, currentCol)) {
+            adjacentToSymbol = true;
+          }
+          currentCol++;
         }
 
-        numberGroup.number += currentCell;
-        numberGroup.positions.push([currentRow, currentCol]);
+        // Add number group if it's not empty and adjacent to a symbol
+        if (number && adjacentToSymbol) {
+          numberGroups.push({ number, positions, adjacentToSymbol });
+        }
 
-        visited.add(`${currentRow},${currentCol}`);
-
-        currentCol++;
+        // Update col to the end of the current number group
+        col = currentCol;
+      } else {
+        col++;
       }
-
-      numberGroups.push(numberGroup);
     }
   }
 
   return numberGroups;
 }
 
+function isAdjacentToSymbol(schematic, row, col) {
+  // Output - a boolean
+  // Check all 8 directions around the cell and return true if any adjacent cell contains a symbol
+
+  const directions = [
+    [row - 1, col - 1],
+    [row - 1, col],
+    [row - 1, col + 1],
+    [row, col - 1],
+    [row, col + 1],
+    [row + 1, col - 1],
+    [row + 1, col],
+    [row + 1, col + 1],
+  ];
+
+  for (const [row, col] of directions) {
+    if (isSymbol(schematic[row]?.[col])) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // Part 1
 function part1(lines) {
-  return 0;
+  const schematic = schematicToArray(lines.join("\n"));
+  const numberGroups = findNumberGroups(schematic);
+
+  // Debugging: Log each number group found
+  console.log("Number groups:", numberGroups);
+
+  let sum = 0;
+  for (const group of numberGroups) {
+    sum += parseInt(group.number);
+  }
+
+  // Debugging: Log the calculated sum
+  console.log("Calculated sum:", sum);
+
+  return sum;
 }
 
 // Part 2
@@ -75,7 +110,7 @@ function part2(lines) {
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8").split("\n");
-// console.log("Part 1:", part1(lines));
+console.log("Part 1:", part1(lines));
 // console.log("Part 2:", part2(lines));
 
 module.exports = {
@@ -85,4 +120,5 @@ module.exports = {
   schematicToArray,
   isSymbol,
   findNumberGroups,
+  isAdjacentToSymbol,
 };
