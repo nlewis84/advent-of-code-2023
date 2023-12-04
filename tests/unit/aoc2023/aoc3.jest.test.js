@@ -1,8 +1,11 @@
 const {
   schematicToArray,
   isSymbol,
+  isGear,
+  calculateGearRatio,
   isAdjacentToSymbol,
   findNumberGroups,
+  getAdjacentRatios,
 } = require("../../../src/aoc2023/aoc3");
 const { test, expect } = require("@jest/globals");
 
@@ -72,4 +75,63 @@ test("isAdjacentToSymbol returns true if cell is adjacent to a symbol", () => {
   expect(isAdjacentToSymbol(mockSchematic, 2, 0)).toBe(false);
   expect(isAdjacentToSymbol(mockSchematic, 2, 1)).toBe(true);
   expect(isAdjacentToSymbol(mockSchematic, 2, 2)).toBe(true);
+});
+
+test("isGear returns true if cell is a gear", () => {
+  const mockSchematic = [
+    [".", ".", "7", "3"],
+    ["$", ".", ".", "%"],
+    ["4", ".", "1", "0"],
+  ];
+
+  const numberGroups = findNumberGroups(mockSchematic);
+
+  expect(isGear(mockSchematic, numberGroups, 0, 0)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 0, 1)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 0, 2)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 0, 3)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 1, 0)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 1, 1)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 1, 2)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 1, 3)).toBe(true);
+  expect(isGear(mockSchematic, numberGroups, 2, 0)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 2, 1)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 2, 2)).toBe(false);
+  expect(isGear(mockSchematic, numberGroups, 2, 3)).toBe(false);
+});
+
+test("calculateGearRatio returns the gear ratio", () => {
+  const mockSchematic = [73, 10];
+
+  expect(calculateGearRatio(mockSchematic)).toBe(730);
+});
+
+test("getAdjacentRatios returns an array of part numbers", () => {
+  const mockNumberGroups = [
+    {
+      adjacentToSymbol: true,
+      number: "73",
+      positions: [
+        [0, 2],
+        [0, 3],
+      ],
+    },
+    {
+      adjacentToSymbol: true,
+      number: "10",
+      positions: [
+        [2, 2],
+        [2, 3],
+      ],
+    },
+  ];
+
+  const mockGearRow = 1;
+  const mockGearCol = 3;
+
+  const expectedResult = [73, 10];
+
+  expect(getAdjacentRatios(mockNumberGroups, mockGearRow, mockGearCol)).toEqual(
+    expectedResult
+  );
 });
