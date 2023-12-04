@@ -81,16 +81,7 @@ function isAdjacentToSymbol(schematic, row, col) {
   // Output - a boolean
   // Check all 8 directions around the cell and return true if any adjacent cell contains a symbol
 
-  const directions = [
-    [row - 1, col - 1],
-    [row - 1, col],
-    [row - 1, col + 1],
-    [row, col - 1],
-    [row, col + 1],
-    [row + 1, col - 1],
-    [row + 1, col],
-    [row + 1, col + 1],
-  ];
+  const directions = DIRECTIONS(row, col);
 
   for (const [row, col] of directions) {
     if (isSymbol(schematic[row]?.[col])) {
@@ -109,16 +100,7 @@ function isGear(schematic, numberGroups, row, col) {
   }
 
   let adjacentGroupIds = new Set();
-  const directions = [
-    [row - 1, col - 1],
-    [row - 1, col],
-    [row - 1, col + 1],
-    [row, col - 1],
-    [row, col + 1],
-    [row + 1, col - 1],
-    [row + 1, col],
-    [row + 1, col + 1],
-  ];
+  const directions = DIRECTIONS(row, col);
 
   directions.forEach(([adjRow, adjCol]) => {
     if (
