@@ -33,6 +33,19 @@ test("isSymbol returns true if cell is a symbol", () => {
 });
 
 test("findNumberGroups returns an array of objects", () => {
+  const input = `467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..`;
+
+  const mockSchematic2 = schematicToArray(input);
+
   const mockSchematic = [
     ["1", "2", "3"],
     [".", ".", "*"],
@@ -56,7 +69,82 @@ test("findNumberGroups returns an array of objects", () => {
     },
   ];
 
+  const expectedResult2 = [
+    {
+      adjacentToSymbol: true,
+      number: "467",
+      positions: [
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ],
+    },
+    {
+      adjacentToSymbol: true,
+      number: "35",
+      positions: [
+        [2, 2],
+        [2, 3],
+      ],
+    },
+    {
+      adjacentToSymbol: true,
+      number: "633",
+      positions: [
+        [2, 6],
+        [2, 7],
+        [2, 8],
+      ],
+    },
+    {
+      adjacentToSymbol: true,
+      number: "617",
+      positions: [
+        [4, 0],
+        [4, 1],
+        [4, 2],
+      ],
+    },
+    {
+      adjacentToSymbol: true,
+      number: "592",
+      positions: [
+        [6, 2],
+        [6, 3],
+        [6, 4],
+      ],
+    },
+    {
+      adjacentToSymbol: true,
+      number: "755",
+      positions: [
+        [7, 6],
+        [7, 7],
+        [7, 8],
+      ],
+    },
+    {
+      adjacentToSymbol: true,
+      number: "664",
+      positions: [
+        [9, 1],
+        [9, 2],
+        [9, 3],
+      ],
+    },
+    {
+      adjacentToSymbol: true,
+      number: "598",
+      positions: [
+        [9, 5],
+        [9, 6],
+        [9, 7],
+      ],
+    },
+  ];
+
   expect(findNumberGroups(mockSchematic)).toEqual(expectedResult);
+  expect(findNumberGroups(mockSchematic2)).toEqual(expectedResult2);
 });
 
 test("isAdjacentToSymbol returns true if cell is adjacent to a symbol", () => {
@@ -78,6 +166,18 @@ test("isAdjacentToSymbol returns true if cell is adjacent to a symbol", () => {
 });
 
 test("isGear returns true if cell is a gear", () => {
+  const input = `467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..`;
+
+  const mockSchematic2 = schematicToArray(input);
   const mockSchematic = [
     [".", ".", "7", "3"],
     ["$", ".", ".", "%"],
@@ -85,6 +185,7 @@ test("isGear returns true if cell is a gear", () => {
   ];
 
   const numberGroups = findNumberGroups(mockSchematic);
+  const numberGroups2 = findNumberGroups(mockSchematic2);
 
   expect(isGear(mockSchematic, numberGroups, 0, 0)).toBe(false);
   expect(isGear(mockSchematic, numberGroups, 0, 1)).toBe(false);
@@ -98,6 +199,12 @@ test("isGear returns true if cell is a gear", () => {
   expect(isGear(mockSchematic, numberGroups, 2, 1)).toBe(false);
   expect(isGear(mockSchematic, numberGroups, 2, 2)).toBe(false);
   expect(isGear(mockSchematic, numberGroups, 2, 3)).toBe(false);
+  expect(isGear(mockSchematic2, numberGroups2, 0, 3)).toBe(false);
+  expect(isGear(mockSchematic2, numberGroups2, 2, 6)).toBe(false);
+  expect(isGear(mockSchematic2, numberGroups2, 3, 3)).toBe(false);
+  expect(isGear(mockSchematic2, numberGroups2, 4, 5)).toBe(false);
+  expect(isGear(mockSchematic2, numberGroups2, 8, 3)).toBe(false);
+  expect(isGear(mockSchematic2, numberGroups2, 8, 5)).toBe(true);
 });
 
 test("calculateGearRatio returns the gear ratio", () => {
