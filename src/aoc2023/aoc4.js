@@ -28,11 +28,9 @@ function parseCard(input) {
   // Replace multiple spaces with a single space
   const cleanedInput = input.replace(/\s+/g, " ");
 
-  const [cardNumber, numbers] = input.split(": ");
+  const [cardNumber, numbers] = cleanedInput.split(": ");
   const [winningNumbers, myNumbers] = numbers.split(" | ");
 
-  // Sometimes there are extra spaces in the input
-  // Replace multiple spaces with a single space
   const winningNumbersArray = winningNumbers
     .replace(/\s+/g, " ")
     .split(" ")
@@ -43,8 +41,10 @@ function parseCard(input) {
     .split(" ")
     .map((num) => parseInt(num, 10));
 
+  const parsedCardNumber = parseInt(cardNumber.replace("Card ", ""), 10);
+
   return {
-    cardNumber: parseInt(cardNumber.replace("Card ", ""), 10),
+    cardNumber: parsedCardNumber,
     winningNumbers: winningNumbersArray,
     myNumbers: myNumbersArray,
   };
@@ -54,8 +54,12 @@ function parseCard(input) {
 function checkForWinningNumbers(winningNumbers, myNumbers) {
   // Input: two arrays of numbers - ex: [ 1, 2, 3, 4, 5, 6 ] and [ 2, 4, 6, 14, 298, 12 ]
   // Output: an array of numbers - ex: [ 2, 4, 6 ]
+  const sortedWinningNumbers = winningNumbers.sort();
+  const sortedMyNumbers = myNumbers.sort();
 
-  return winningNumbers.filter((num) => myNumbers.includes(num)).sort();
+  return sortedWinningNumbers
+    .filter((num) => sortedMyNumbers.includes(num))
+    .sort();
 }
 
 // Function to calculate points for winning numbers
