@@ -5,4 +5,5 @@ dotenv.config({
 });
 module.exports = {
   aoc_input: process.env.AOC_INPUT,
+  aoc_test_input: process.env.AOC_TEST_INPUT,
 };
