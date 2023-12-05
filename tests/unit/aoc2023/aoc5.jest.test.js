@@ -4,6 +4,7 @@ const {
   parseInput,
   mapNumber,
   findLowestLocation,
+  part2ParseInput,
 } = require("../../../src/aoc2023/aoc5");
 const { aoc_input, aoc_test_input } = require("../../../config");
 const { test, expect } = require("@jest/globals");
@@ -109,4 +110,51 @@ test("findLowestLocation finds the lowest location", () => {
   expect(findLowestLocation(mockSeeds, mockMappings)).toStrictEqual([
     82, 43, 86, 35,
   ]);
+});
+
+test("part2ParseInput parses the input correctly", () => {
+  const mockInput = fs.readFileSync(aoc_test_input, "utf-8");
+
+  const expectedResult = {
+    mappings: [
+      [
+        [50, 98, 2],
+        [52, 50, 48],
+      ],
+      [
+        [0, 15, 37],
+        [37, 52, 2],
+        [39, 0, 15],
+      ],
+      [
+        [49, 53, 8],
+        [0, 11, 42],
+        [42, 0, 7],
+        [57, 7, 4],
+      ],
+      [
+        [88, 18, 7],
+        [18, 25, 70],
+      ],
+      [
+        [45, 77, 23],
+        [81, 45, 19],
+        [68, 64, 13],
+      ],
+      [
+        [0, 69, 1],
+        [1, 0, 69],
+      ],
+      [
+        [60, 56, 37],
+        [56, 93, 4],
+      ],
+    ],
+    seeds: [
+      79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 55, 56, 57, 58,
+      59, 60, 61, 62, 63, 64, 65, 66, 67,
+    ],
+  };
+
+  expect(part2ParseInput(mockInput)).toEqual(expectedResult);
 });

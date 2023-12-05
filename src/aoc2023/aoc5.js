@@ -49,6 +49,45 @@ function findLowestLocation(seeds, mappings) {
   });
 }
 
+function part2ParseInput(input) {
+  const lines = input.split("\n");
+  const seedParts = lines[0].split(": ")[1].split(" ").map(Number);
+
+  // For Part Two - Handle ranges
+  const seeds = [];
+  for (let i = 0; i < seedParts.length; i += 2) {
+    let start = seedParts[i];
+    let length = seedParts[i + 1];
+    for (let j = start; j < start + length; j++) {
+      seeds.push(j);
+    }
+  }
+
+  // This is the same as parseInput from Part One
+  const mappings = [];
+  let currentMapping = [];
+
+  lines.slice(1).forEach((line) => {
+    if (line.includes("map:")) {
+      if (currentMapping.length > 0) {
+        mappings.push(currentMapping);
+        currentMapping = [];
+      }
+    } else {
+      const nums = line.split(" ").map(Number);
+      if (nums.length === 3) {
+        currentMapping.push(nums);
+      }
+    }
+  });
+
+  if (currentMapping.length > 0) {
+    mappings.push(currentMapping);
+  }
+
+  return { seeds, mappings };
+}
+
 // Part 1
 function part1(lines) {
   const { seeds, mappings } = parseInput(lines);
@@ -72,4 +111,5 @@ module.exports = {
   parseInput,
   mapNumber,
   findLowestLocation,
+  part2ParseInput,
 };
