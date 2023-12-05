@@ -30,6 +30,15 @@ function parseInput(input) {
   return { seeds, mappings };
 }
 
+function mapNumber(number, mapping) {
+  for (let [destStart, srcStart, length] of mapping) {
+    if (number >= srcStart && number < srcStart + length) {
+      return destStart + (number - srcStart);
+    }
+  }
+  return number;
+}
+
 // Part 1
 function part1(lines) {
   return 0;
@@ -50,4 +59,5 @@ module.exports = {
   part2,
   // other functions
   parseInput,
+  mapNumber,
 };

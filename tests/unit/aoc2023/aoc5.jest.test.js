@@ -1,4 +1,9 @@
-const { part1, part2, parseInput } = require("../../../src/aoc2023/aoc4");
+const {
+  part1,
+  part2,
+  parseInput,
+  mapNumber,
+} = require("../../../src/aoc2023/aoc4");
 const { aoc_input, aoc_test_input } = require("../../../config");
 const { test, expect } = require("@jest/globals");
 const fs = require("fs");
@@ -36,4 +41,15 @@ test("parseInput parses the input correctly", () => {
   ];
 
   expect(parseInput(mockInput)).toEqual(expectedResult);
+});
+
+test("mapNumber maps numbers correctly", () => {
+  const mockNumber = 100;
+  const mockMapping = [
+    [0, 0, 50],
+    [50, 50, 50],
+    [100, 100, 50],
+  ];
+
+  expect(mapNumber(mockNumber, mockMapping)).toBe(150);
 });
