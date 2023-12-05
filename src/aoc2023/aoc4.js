@@ -137,7 +137,6 @@ function part2(lines) {
       if (nextCardIndex < parsedCards.length) {
         wonCardsQueue.push(parsedCards[nextCardIndex]);
         totalCards++;
-        console.log(totalCards);
       }
     }
   }
@@ -149,7 +148,7 @@ function part2(lines) {
 // const lines = fs.readFileSync(aoc_test_input, "utf-8");
 const lines = fs.readFileSync(aoc_input, "utf-8");
 // console.log("Part 1:", part1(lines));
-console.log("Part 2:", part2(lines));
+// console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
