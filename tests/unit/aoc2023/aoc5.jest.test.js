@@ -4,7 +4,12 @@ const {
   parseInput,
   mapNumber,
   findLowestLocation,
-  part2ParseInput,
+  findApproximateLocation,
+  refineSearch,
+  createSeedRanges,
+  reverseMapThroughAllMappings,
+  reverseMapNumber,
+  isWithinSeedRanges,
 } = require("../../../src/aoc2023/aoc5");
 const { aoc_input, aoc_test_input } = require("../../../config");
 const { test, expect } = require("@jest/globals");
@@ -112,55 +117,170 @@ test("findLowestLocation finds the lowest location", () => {
   ]);
 });
 
-test("part2ParseInput parses the input correctly", () => {
-  const mockInput = fs.readFileSync(aoc_test_input, "utf-8");
-
-  const expectedResult = {
-    mappings: [
-      [
-        [50, 98, 2],
-        [52, 50, 48],
-      ],
-      [
-        [0, 15, 37],
-        [37, 52, 2],
-        [39, 0, 15],
-      ],
-      [
-        [49, 53, 8],
-        [0, 11, 42],
-        [42, 0, 7],
-        [57, 7, 4],
-      ],
-      [
-        [88, 18, 7],
-        [18, 25, 70],
-      ],
-      [
-        [45, 77, 23],
-        [81, 45, 19],
-        [68, 64, 13],
-      ],
-      [
-        [0, 69, 1],
-        [1, 0, 69],
-      ],
-      [
-        [60, 56, 37],
-        [56, 93, 4],
-      ],
-    ],
-    seeds: [
-      79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 55, 56, 57, 58,
-      59, 60, 61, 62, 63, 64, 65, 66, 67,
-    ],
-  };
-
-  expect(part2ParseInput(mockInput)).toEqual(expectedResult);
-});
-
 test("part2 processes lines correctly", () => {
   const mockInput = fs.readFileSync(aoc_test_input, "utf-8");
 
   expect(part2(mockInput)).toBe(46);
+});
+
+test("findApproximateLocation finds the approximate location", () => {
+  const mockMappings = [
+    [
+      [50, 98, 2],
+      [52, 50, 48],
+    ],
+    [
+      [0, 15, 37],
+      [37, 52, 2],
+      [39, 0, 15],
+    ],
+    [
+      [49, 53, 8],
+      [0, 11, 42],
+      [42, 0, 7],
+      [57, 7, 4],
+    ],
+    [
+      [88, 18, 7],
+      [18, 25, 70],
+    ],
+    [
+      [45, 77, 23],
+      [81, 45, 19],
+      [68, 64, 13],
+    ],
+    [
+      [0, 69, 1],
+      [1, 0, 69],
+    ],
+    [
+      [60, 56, 37],
+      [56, 93, 4],
+    ],
+  ];
+  const mockSeedRanges = [
+    { start: 79, end: 93 },
+    { start: 55, end: 68 },
+  ];
+  const mockStepSize = 3;
+
+  expect(
+    findApproximateLocation(mockMappings, mockSeedRanges, mockStepSize)
+  ).toBe(48);
+});
+
+test("refineSearch refines the search", () => {
+  const mockLocation = 48;
+  const mockMappings = [
+    [
+      [50, 98, 2],
+      [52, 50, 48],
+    ],
+    [
+      [0, 15, 37],
+      [37, 52, 2],
+      [39, 0, 15],
+    ],
+    [
+      [49, 53, 8],
+      [0, 11, 42],
+      [42, 0, 7],
+      [57, 7, 4],
+    ],
+    [
+      [88, 18, 7],
+      [18, 25, 70],
+    ],
+    [
+      [45, 77, 23],
+      [81, 45, 19],
+      [68, 64, 13],
+    ],
+    [
+      [0, 69, 1],
+      [1, 0, 69],
+    ],
+    [
+      [60, 56, 37],
+      [56, 93, 4],
+    ],
+  ];
+  const mockSeedRanges = [
+    { start: 79, end: 93 },
+    { start: 55, end: 68 },
+  ];
+  const mockStepSize = 3;
+
+  expect(
+    refineSearch(mockLocation, mockMappings, mockSeedRanges, mockStepSize)
+  ).toBe(46);
+});
+
+test("createSeedRanges creates seed ranges correctly", () => {
+  const mockSeeds = [79, 14, 55, 13];
+
+  expect(createSeedRanges(mockSeeds)).toStrictEqual([
+    { start: 79, end: 93 },
+    { start: 55, end: 68 },
+  ]);
+});
+
+test("reverseMapThroughAllMappings maps numbers correctly", () => {
+  const mockNumber = 50;
+  const mockMappings = [
+    [
+      [50, 98, 2],
+      [52, 50, 48],
+    ],
+    [
+      [0, 15, 37],
+      [37, 52, 2],
+      [39, 0, 15],
+    ],
+    [
+      [49, 53, 8],
+      [0, 11, 42],
+      [42, 0, 7],
+      [57, 7, 4],
+    ],
+    [
+      [88, 18, 7],
+      [18, 25, 70],
+    ],
+    [
+      [45, 77, 23],
+      [81, 45, 19],
+      [68, 64, 13],
+    ],
+    [
+      [0, 69, 1],
+      [1, 0, 69],
+    ],
+    [
+      [60, 56, 37],
+      [56, 93, 4],
+    ],
+  ];
+
+  expect(reverseMapThroughAllMappings(mockNumber, mockMappings)).toBe(86);
+});
+
+test("isWithinSeedRanges checks if a number is within seed ranges", () => {
+  const mockNumber = 86;
+  const mockSeedRanges = [
+    { start: 79, end: 93 },
+    { start: 55, end: 68 },
+  ];
+
+  expect(isWithinSeedRanges(mockNumber, mockSeedRanges)).toBe(true);
+});
+
+test("reverseMapNumber maps numbers correctly", () => {
+  const mockNumber = 86;
+  const mockMapping = [
+    [50, 98, 2],
+    [52, 50, 48],
+  ];
+
+  expect(reverseMapNumber(mockNumber, mockMapping)).toBe(84);
 });
