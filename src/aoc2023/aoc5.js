@@ -39,9 +39,20 @@ function mapNumber(number, mapping) {
   return number;
 }
 
+function findLowestLocation(seeds, mappings) {
+  return seeds.map((seed) => {
+    let mappedNumber = seed;
+    for (let mapping of mappings) {
+      mappedNumber = mapNumber(mappedNumber, mapping);
+    }
+    return mappedNumber;
+  });
+}
+
 // Part 1
 function part1(lines) {
-  return 0;
+  const { seeds, mappings } = parseInput(lines);
+  return findLowestLocation(seeds, mappings).sort((a, b) => a - b)[0];
 }
 
 // Part 2
@@ -50,8 +61,8 @@ function part2(lines) {
 }
 
 // Reading from file and running both parts
-const lines = fs.readFileSync(aoc_input, "utf-8").split("\n");
-// console.log("Part 1:", part1(lines));
+const lines = fs.readFileSync(aoc_input, "utf-8");
+console.log("Part 1:", part1(lines));
 // console.log("Part 2:", part2(lines));
 
 module.exports = {
@@ -60,4 +71,5 @@ module.exports = {
   // other functions
   parseInput,
   mapNumber,
+  findLowestLocation,
 };
