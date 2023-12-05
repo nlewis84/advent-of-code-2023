@@ -5,6 +5,7 @@ const {
   parseCard,
   parseInput,
   part1,
+  part2,
 } = require("../../../src/aoc2023/aoc4");
 const { aoc_input, aoc_test_input } = require("../../../config");
 const { test, expect } = require("@jest/globals");
@@ -149,4 +150,10 @@ test("part1", () => {
   const mockInput = fs.readFileSync(aoc_test_input, "utf-8");
 
   expect(part1(mockInput)).toBe(13);
+});
+
+test("part2", () => {
+  const mockInput = fs.readFileSync(aoc_test_input, "utf-8");
+
+  expect(part2(mockInput)).toBe(30);
 });

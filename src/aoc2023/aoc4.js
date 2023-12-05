@@ -120,14 +120,36 @@ function part1(lines) {
 
 // Part 2
 function part2(lines) {
-  return 0;
+  const cards = parseInput(lines);
+  const parsedCards = cards.map(parseCard);
+  let totalCards = parsedCards.length;
+  let wonCardsQueue = [...parsedCards];
+
+  while (wonCardsQueue.length > 0) {
+    const currentCard = wonCardsQueue.shift();
+    const matchingNumbers = checkForWinningNumbers(
+      currentCard.winningNumbers,
+      currentCard.myNumbers
+    ).length;
+
+    for (let i = 1; i <= matchingNumbers; i++) {
+      const nextCardIndex = currentCard.cardNumber + i - 1;
+      if (nextCardIndex < parsedCards.length) {
+        wonCardsQueue.push(parsedCards[nextCardIndex]);
+        totalCards++;
+        console.log(totalCards);
+      }
+    }
+  }
+
+  return totalCards;
 }
 
 // Reading from file and running both parts
 // const lines = fs.readFileSync(aoc_test_input, "utf-8");
 const lines = fs.readFileSync(aoc_input, "utf-8");
-console.log("Part 1:", part1(lines));
-// console.log("Part 2:", part2(lines));
+// console.log("Part 1:", part1(lines));
+console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
