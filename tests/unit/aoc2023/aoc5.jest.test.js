@@ -158,3 +158,9 @@ test("part2ParseInput parses the input correctly", () => {
 
   expect(part2ParseInput(mockInput)).toEqual(expectedResult);
 });
+
+test("part2 processes lines correctly", () => {
+  const mockInput = fs.readFileSync(aoc_test_input, "utf-8");
+
+  expect(part2(mockInput)).toBe(46);
+});
