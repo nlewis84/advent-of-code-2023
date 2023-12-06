@@ -1,4 +1,4 @@
-const { aoc_input } = require("../../config");
+const { aoc_input, aoc_test_input } = require("../../config");
 const fs = require("fs");
 
 // Helper functions
