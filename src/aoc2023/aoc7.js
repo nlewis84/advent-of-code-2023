@@ -31,28 +31,13 @@ function parseInput(input) {
 function determineType(hands) {
   // Input: array of objects; [ { hand: 72A4T, bid: 765 }, { hand: AAA83, bid: 684 } ]
   // Output: array of objects; [ { hand: 72A4T, bid: 765, type: "high card", highCard: "A" }, { hand: AAA83, bid: 684, type: "three of a kind", highCard: "A" } ]
-
   return hands.map((handObject) => {
-    const hand = handObject.hand;
-    const counts = {};
-
-    // Count occurrences of each card
-    for (let card of hand) {
-      counts[card] = (counts[card] || 0) + 1;
-    }
-
-    // Sort cards by count and card value
-    const sortedCards = Object.entries(counts).sort((a, b) => {
-      if (b[1] === a[1]) {
-        return CARD_ORDER.indexOf(b[0]) - CARD_ORDER.indexOf(a[0]);
-      }
-      return b[1] - a[1];
-    });
+    const counts = countCards(handObject.hand);
+    const sortedCards = sortCardsByCountAndValue(counts, CARD_ORDER);
 
     const handType = determineHandType(sortedCards);
-    const highCard = sortedCards[0][0]; // The highest card based on the sort
+    const highCard = sortedCards[0][0];
 
-    // Return the new hand object
     return {
       ...handObject,
       type: handType,
@@ -65,40 +50,40 @@ function part2DetermineType(hands) {
   // Input: array of objects; [ { hand: 72A4T, bid: 765 }, { hand: AAA83, bid: 684 } ]
   // Output: array of objects; [ { hand: 72A4T, bid: 765, type: "high card", highCard: "A" }, { hand: AAA83, bid: 684, type: "three of a kind", highCard: "A" } ]
   return hands.map((handObject) => {
-    const hand = handObject.hand;
-    const counts = {};
-
-    // Count occurrences of each card
-    for (let card of hand) {
-      counts[card] = (counts[card] || 0) + 1;
-    }
-
+    const counts = countCards(handObject.hand);
     let handType, highCard;
 
-    if (hand.includes("J")) {
-      // Determine the best hand type with J as a wildcard
+    if (handObject.hand.includes("J")) {
       ({ handType, highCard } = determineBestHandWithJoker(counts));
     } else {
-      // Sort cards by count and card value for hands without J
-      const sortedCards = Object.entries(counts).sort((a, b) => {
-        if (b[1] === a[1]) {
-          return (
-            PART_2_CARD_ORDER.indexOf(b[0]) - PART_2_CARD_ORDER.indexOf(a[0])
-          );
-        }
-        return b[1] - a[1];
-      });
-
+      const sortedCards = sortCardsByCountAndValue(counts, PART_2_CARD_ORDER);
       handType = determineHandType(sortedCards);
       highCard = sortedCards[0][0];
     }
 
-    // Return the new hand object for both cases
     return {
       ...handObject,
       type: handType,
       highCard: highCard,
     };
+  });
+}
+
+function countCards(hand) {
+  const counts = {};
+  for (let card of hand) {
+    counts[card] = (counts[card] || 0) + 1;
+  }
+  return counts;
+}
+
+// New function to sort cards
+function sortCardsByCountAndValue(counts, cardOrder) {
+  return Object.entries(counts).sort((a, b) => {
+    if (b[1] === a[1]) {
+      return cardOrder.indexOf(b[0]) - cardOrder.indexOf(a[0]);
+    }
+    return b[1] - a[1];
   });
 }
 
