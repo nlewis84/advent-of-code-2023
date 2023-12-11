@@ -106,7 +106,7 @@ const startingNodes = getAllNodesStartingWithA(nodes);
 const node1 = findStepsFromNodeToZ(startingNodes[0], instructions, nodes);
 const node2 = findStepsFromNodeToZ(startingNodes[1], instructions, nodes);
 
-console.log(node1, node2);
+// console.log(node1, node2);
 
 const numbers = [2, 3];
 
@@ -128,7 +128,7 @@ for (let i = 1; i < numbers.length; i++) {
   lcm = lowestCommonMultiple(lcm, numbers[i]);
 }
 
-console.log(lcm);
+// console.log(lcm);
 
 // Part 1
 function part1(lines) {

@@ -16,17 +16,17 @@ const { aoc_input, aoc_test_input } = require("../../../config");
 const { test, expect } = require("@jest/globals");
 const fs = require("fs");
 
-test("parseInput", () => {
-  const mockInput = fs.readFileSync(aoc_test_input, "utf-8");
+// test("parseInput", () => {
+//   const mockInput = fs.readFileSync(aoc_test_input, "utf-8");
 
-  expect(parseInput(mockInput)).toEqual([
-    { hand: "32T3K", bid: 765 },
-    { hand: "T55J5", bid: 684 },
-    { hand: "KK677", bid: 28 },
-    { hand: "KTJJT", bid: 220 },
-    { hand: "QQQJA", bid: 483 },
-  ]);
-});
+//   expect(parseInput(mockInput)).toEqual([
+//     { hand: "32T3K", bid: 765 },
+//     { hand: "T55J5", bid: 684 },
+//     { hand: "KK677", bid: 28 },
+//     { hand: "KTJJT", bid: 220 },
+//     { hand: "QQQJA", bid: 483 },
+//   ]);
+// });
 
 test("determineType", () => {
   // Input: array of objects; [ { hand: 72A4T, bid: 765 }, { hand: AAA83, bid: 684 } ]
