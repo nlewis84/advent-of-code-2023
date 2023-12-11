@@ -2,163 +2,182 @@ const { aoc_input, aoc_test_input } = require("../../config");
 const fs = require("fs");
 
 // Helper functions
+// 1. Parsing the Input
 function parseInput(input) {
-  const lines = input.trim().split("\n");
-  const grid = lines.map((line) => line.split(""));
-  return grid;
+  return input.split("\n").map((line) => line.trim().split(""));
 }
 
+// 2. Finding the Start Position
 function findStartPosition(grid) {
-  for (let y = 0; y < grid.length; y++) {
-    for (let x = 0; x < grid[y].length; x++) {
-      if (grid[y][x] === "S") {
-        return { x, y };
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] === "S") {
+        return { x: j, y: i };
       }
     }
   }
-  throw new Error("Starting position not found");
+  return null;
 }
 
-// Deduces the pipe type at the starting position
-function deduceStartPipeType(grid, { x, y }) {
-  // Check the neighboring cells to determine the pipe type at 'S'
-  // Example logic - adjust based on actual puzzle rules
-  const neighbors = [
-    { x: x + 1, y },
-    { x: x - 1, y },
-    { x, y: y + 1 },
-    { x, y: y - 1 },
-  ];
+// 3. Building the Pipe Network
+// This function would iterate over the grid and create nodes and edges
+function buildPipeNetwork(grid) {
+  let network = {};
 
-  for (let i = 0; i < neighbors.length; i++) {
-    const { x, y } = neighbors[i];
-    if (grid[y][x] !== ".") {
-      return grid[y][x];
+  // Helper function to add a connection
+  function addConnection(x, y, direction) {
+    let key = `${x},${y}`;
+    if (!network[key]) {
+      network[key] = { x, y, connections: [] };
+    }
+    network[key].connections.push(direction);
+  }
+
+  // Traverse the grid to build the network
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      let tile = grid[y][x];
+
+      // Check each type of pipe and add connections accordingly
+      switch (tile) {
+        case "|":
+          if (y > 0 && "|S".includes(grid[y - 1][x])) addConnection(x, y, "up");
+          if (y < grid.length - 1 && "|S".includes(grid[y + 1][x]))
+            addConnection(x, y, "down");
+          break;
+        case "-":
+          if (x > 0 && "-S".includes(grid[y][x - 1]))
+            addConnection(x, y, "left");
+          if (x < grid[y].length - 1 && "-S".includes(grid[y][x + 1]))
+            addConnection(x, y, "right");
+          break;
+        case "L":
+          if (y > 0 && "|S".includes(grid[y - 1][x])) addConnection(x, y, "up");
+          if (x < grid[y].length - 1 && "-S".includes(grid[y][x + 1]))
+            addConnection(x, y, "right");
+          break;
+        // Add cases for other types of pipes ('J', '7', 'F', 'S')
+        case "J":
+          if (y > 0 && "|S".includes(grid[y - 1][x])) addConnection(x, y, "up");
+          // left
+          if (x > 0 && "-S".includes(grid[y][x - 1]))
+            addConnection(x, y, "left");
+          break;
+        case "7":
+          // down and left
+          if (y < grid.length - 1 && "|S".includes(grid[y + 1][x]))
+            addConnection(x, y, "down");
+          if (x > 0 && "-S".includes(grid[y][x - 1]))
+            addConnection(x, y, "left");
+          break;
+
+        case "F":
+          // down and right
+          if (y < grid.length - 1 && "|S".includes(grid[y + 1][x]))
+            addConnection(x, y, "down");
+          if (x < grid[y].length - 1 && "-S".includes(grid[y][x + 1]))
+            addConnection(x, y, "right");
+          break;
+      }
     }
   }
-  throw new Error("Unable to deduce pipe type for 'S'");
+
+  return network;
 }
 
-// Helper function for DFS
-function dfs(grid, x, y, visited) {
-  if (
-    x < 0 ||
-    x >= grid[0].length ||
-    y < 0 ||
-    y >= grid.length ||
-    visited[y][x] ||
-    grid[y][x] === "."
-  ) {
-    return;
-  }
+// 4. Finding the Loop
+function findLoop(startPos, network) {
+  let visited = new Set();
+  let loop = [];
 
-  visited[y][x] = true;
+  function dfs(nodeKey, prevDirection) {
+    if (visited.has(nodeKey)) {
+      return;
+    }
 
-  // Add logic to move in the direction based on the pipe type
-  // Continue DFS in the allowed directions
-  dfs(grid, x + 1, y, visited); // East
-  dfs(grid, x - 1, y, visited); // West
-  dfs(grid, x, y + 1, visited); // South
-  dfs(grid, x, y - 1, visited); // North
-}
+    let node = network[nodeKey];
+    if (!node) {
+      console.error(`Node not found in network for key: ${nodeKey}`);
+      return;
+    }
 
-function getNextPositionsForS(x, y, grid) {
-  const possibleTypes = ["|", "-", "F", "7", "J", "L"];
-  return possibleTypes.map((type) => getNextPosition(x, y, type, x, y, grid));
-}
+    visited.add(nodeKey);
+    loop.push(nodeKey);
 
-// Function to get the next position based on the current pipe type
-function getNextPosition(x, y, pipeType, prevX, prevY) {
-  switch (pipeType) {
-    case "F":
-      return prevY < y ? { x: x + 1, y } : { x, y: y + 1 };
-    case "7":
-      return prevX < x ? { x, y: y + 1 } : { x: x - 1, y };
-    case "J":
-      return prevY > y ? { x: x - 1, y } : { x, y: y - 1 };
-    case "L":
-      return prevY > y ? { x: x + 1, y } : { x, y: y - 1 };
-    case "|":
-      return prevY < y ? { x, y: y + 1 } : { x, y: y - 1 };
-    case "-":
-      return prevX < x ? { x: x + 1, y } : { x: x - 1, y };
-    default:
-      throw new Error(`Unknown pipe type: ${pipeType}`);
-  }
-}
+    // Determine the next direction based on the current node and the previous direction
+    let nextDirection = determineNextDirection(node, prevDirection);
+    let nextNodeKey = getNextNodeKey(node, nextDirection);
 
-// Traverse the loop from the starting position
-function traverseLoop(grid, startPosition) {
-  const possibleStarts = getNextPositionsForS(
-    startPosition.x,
-    startPosition.y,
-    grid
-  );
-  for (let i = 0; i < possibleStarts.length; i++) {
-    const { type, nextPosition } = possibleStarts[i];
-    if (traverseFromPosition(grid, startPosition, nextPosition, type)) {
-      return type; // Found the correct type for 'S'
+    if (nextNodeKey && network[nextNodeKey] && !visited.has(nextNodeKey)) {
+      dfs(nextNodeKey, nextDirection);
     }
   }
-  throw new Error("Unable to determine pipe type for 'S'");
-}
 
-// Helper function to traverse from a given position
-function traverseFromPosition(
-  grid,
-  startPosition,
-  currentPosition,
-  currentType
-) {
-  let previousPosition = startPosition;
-  const path = [startPosition];
-
-  while (
-    !(
-      currentPosition.x === startPosition.x &&
-      currentPosition.y === startPosition.y
-    ) ||
-    path.length === 1
-  ) {
-    path.push(currentPosition);
-    const { x, y } = currentPosition;
-    const nextPosition = getNextPosition(
-      x,
-      y,
-      currentType,
-      previousPosition.x,
-      previousPosition.y
-    );
-    previousPosition = currentPosition;
-    currentPosition = nextPosition;
-    currentType = grid[nextPosition.y][nextPosition.x];
+  function getNextNodeKey(node, direction) {
+    // Compute the next node key based on the current direction
+    switch (direction) {
+      case "up":
+        return `${node.x},${node.y - 1}`;
+      case "down":
+        return `${node.x},${node.y + 1}`;
+      case "left":
+        return `${node.x - 1},${node.y}`;
+      case "right":
+        return `${node.x + 1},${node.y}`;
+      default:
+        return null;
+    }
   }
 
-  // Check if the loop is valid and returns to 'S'
-  return (
-    currentPosition.x === startPosition.x &&
-    currentPosition.y === startPosition.y
-  );
+  function determineNextDirection(node, prevDirection) {
+    // Implement logic to determine the next direction based on the current node's type
+    // and the previous direction.
+    return node.connections.find((dir) => dir !== prevDirection);
+  }
+
+  let startKey = `${startPos.x},${startPos.y}`;
+  dfs(startKey, "down"); // Start moving down from the '7' pipe
+
+  return loop;
 }
 
-// Calculate the farthest distance from the starting point
-function calculateFarthestDistance(path, startPosition) {
-  let maxDistance = 0;
-  path.forEach((position, index) => {
-    const distance =
-      Math.abs(startPosition.x - position.x) +
-      Math.abs(startPosition.y - position.y);
-    maxDistance = Math.max(maxDistance, distance);
-  });
-  return maxDistance;
+// 5. Calculating Distances
+function calculateDistances(loop, startPos) {
+  // Calculate and return distances within the loop
+}
+
+// 6. Finding the Farthest Point
+function findFarthestPoint(distances) {
+  // Find and return the farthest point's distance
+}
+
+// Main function to solve the puzzle
+function solvePuzzle(input) {
+  const grid = parseInput(input);
+  const startPos = findStartPosition(grid);
+  const network = buildPipeNetwork(grid);
+  const loop = findLoop(startPos, network);
+  const distances = calculateDistances(loop, startPos);
+  const farthestPointDistance = findFarthestPoint(distances);
+  return farthestPointDistance;
 }
 
 function part1(input) {
   const grid = parseInput(input);
-  const startPosition = findStartPosition(grid);
-  const startPipeType = deduceStartPipeType(grid, startPosition);
-  const loopTiles = traverseLoop(grid, startPosition, startPipeType);
-  return calculateFarthestDistance(loopTiles, startPosition);
+  // const startPos = findStartPosition(grid);
+  const startPos = { x: 25, y: 83 };
+  const network = buildPipeNetwork(grid);
+  console.log(startPos);
+  // log the number of keys on the network
+  console.log(Object.keys(network).length);
+  // return the first ten keys of network
+  console.log(Object.keys(network).slice(5700, 9000));
+  const loop = findLoop(startPos, network);
+  console.log(loop);
+  const distances = calculateDistances(loop, startPos);
+  const farthestPointDistance = findFarthestPoint(distances);
+
+  return farthestPointDistance;
 }
 
 function part2(input) {
@@ -166,7 +185,7 @@ function part2(input) {
 }
 
 // Reading from file and running the solution
-const lines = fs.readFileSync(aoc_test_input, "utf-8");
+const lines = fs.readFileSync(aoc_input, "utf-8");
 console.log("Part 1:", part1(lines));
 
 module.exports = {
