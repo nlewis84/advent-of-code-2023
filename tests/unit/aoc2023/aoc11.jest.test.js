@@ -76,5 +76,8 @@ test("calculateShortestPaths", () => {
   const emptyRows = new Set([3, 7]);
   const emptyCols = new Set([2, 5, 8]);
 
-  expect(calculateShortestPaths(input, emptyRows, emptyCols)).toEqual(374);
+  expect(calculateShortestPaths(input, emptyRows, emptyCols, 2)).toEqual(374);
+  expect(calculateShortestPaths(input, emptyRows, emptyCols, 1000000)).toEqual(
+    82000210
+  );
 });
