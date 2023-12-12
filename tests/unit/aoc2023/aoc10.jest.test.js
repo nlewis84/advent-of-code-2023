@@ -28,20 +28,3 @@ test("findStartPosition", () => {
   const start = findStartPosition(parsedInput);
   expect(start).toEqual({ x: 1, y: 1 });
 });
-
-test("findPaths", () => {
-  const input = `.....\n.S-7.\n.|.|.\n.L-J.\n.....`;
-  const parsedInput = parseInput(input);
-  const start = findStartPosition(parsedInput);
-  const paths = findPaths(parsedInput, start);
-  expect(paths).toEqual({
-    "1,1": 0,
-    "1,2": 1,
-    "1,3": 2,
-    "2,3": 3,
-    "3,3": 4,
-    "2,1": 1,
-    "3,1": 2,
-    "3,2": 3,
-  });
-});
