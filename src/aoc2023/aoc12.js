@@ -2,13 +2,19 @@ const { aoc_input, aoc_test_input } = require("../../config");
 const fs = require("fs");
 
 // Helper functions
-function parseInput(input) {
-  // Input: string of lines; ex: "???.### 1,1,3\n.??..??...?##. 1,1,3"
+function parseInput(input, copies = 1) {
+  // Input: string of lines and number of copies; ex: "???.### 1,1,3\n.??..??...?##. 1,1,3" and 1
   // Output: array of objects; ex: [ { springPattern: "???.###", groupSizes: [1, 1, 3] }, { springPattern: ".??..??...?##.", groupSizes: [1, 1, 3] } ]
 
   return input.split("\n").map((line) => {
     let [springPattern, groupSizesStr] = line.split(" ");
+    // Replicate the spring pattern 'copies' times
+    springPattern = Array(copies).fill(springPattern).join("?");
+
+    // Correctly replicate the entire sequence of group sizes 'copies' times in order
     let groupSizes = groupSizesStr.split(",").map(Number);
+    groupSizes = Array(copies).fill(groupSizes).flat();
+
     return { springPattern, groupSizes };
   });
 }
@@ -105,12 +111,12 @@ function updateArrangementCounts(
   }
 }
 
-function countArrangements(input) {
-  // Input: string of lines; ex: "???.### 1,1,3\n.??..??...?##. 1,1,3"
+function countArrangements(input, copies = 1) {
+  // Input: string of lines and number of copies; ex: "???.### 1,1,3\n.??..??...?##. 1,1,3" and 1
   // Output: number; ex: 8
   let totalArrangements = 0;
-  const parsedData = parseInput(input);
-
+  const parsedData = parseInput(input, copies);
+  console.log(parsedData);
   parsedData.forEach(({ springPattern, groupSizes }) => {
     totalArrangements += calculateArrangements(springPattern, groupSizes);
   });
@@ -125,15 +131,16 @@ function part1(lines) {
 }
 
 // Part 2
-function part2(lines) {
-  return 0;
+function part2(lines, copies) {
+  const solution = countArrangements(lines, copies);
+  return solution;
 }
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8");
-console.log("Part 1:", part1(lines));
+// console.log("Part 1:", part1(lines));
 // console.log("test", countArrangements("???.### 1,1,3"));
-// console.log("Part 2:", part2(lines));
+// console.log("Part 2:", part2(lines, 5));
 
 module.exports = {
   part1,

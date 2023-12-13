@@ -120,3 +120,26 @@ test("calculateArrangements", () => {
 
   expect(calculateArrangements(springPattern4, groupSizes4)).toEqual(expected4);
 });
+
+test("parseInput with copies", () => {
+  const input = `.# 1`;
+  const copies = 5;
+
+  const expected = [
+    { springPattern: ".#?.#?.#?.#?.#", groupSizes: [1, 1, 1, 1, 1] },
+  ];
+
+  expect(parseInput(input, copies)).toEqual(expected);
+
+  const input2 = `???.### 1,1,3`;
+  const copies2 = 5;
+
+  const expected2 = [
+    {
+      springPattern: "???.###????.###????.###????.###????.###",
+      groupSizes: [1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 3],
+    },
+  ];
+
+  expect(parseInput(input2, copies2)).toEqual(expected2);
+});
