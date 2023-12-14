@@ -42,6 +42,85 @@ function calculateLoad(platform) {
   return totalLoad;
 }
 
+function tiltPlatform(platform, direction) {
+  let rows = platform.length;
+  let cols = platform[0].length;
+  let moved;
+
+  switch (direction) {
+    case "north":
+      do {
+        moved = false;
+        for (let col = 0; col < cols; col++) {
+          for (let row = 0; row < rows - 1; row++) {
+            if (platform[row][col] === "." && platform[row + 1][col] === "O") {
+              platform[row][col] = "O";
+              platform[row + 1][col] = ".";
+              moved = true;
+            }
+          }
+        }
+      } while (moved);
+      break;
+
+    case "west":
+      do {
+        moved = false;
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < cols - 1; col++) {
+            if (platform[row][col] === "." && platform[row][col + 1] === "O") {
+              platform[row][col] = "O";
+              platform[row][col + 1] = ".";
+              moved = true;
+            }
+          }
+        }
+      } while (moved);
+      break;
+
+    case "south":
+      do {
+        moved = false;
+        for (let col = 0; col < cols; col++) {
+          for (let row = rows - 1; row > 0; row--) {
+            if (platform[row][col] === "." && platform[row - 1][col] === "O") {
+              platform[row][col] = "O";
+              platform[row - 1][col] = ".";
+              moved = true;
+            }
+          }
+        }
+      } while (moved);
+      break;
+
+    case "east":
+      do {
+        moved = false;
+        for (let row = 0; row < rows; row++) {
+          for (let col = cols - 1; col > 0; col--) {
+            if (platform[row][col] === "." && platform[row][col - 1] === "O") {
+              platform[row][col] = "O";
+              platform[row][col - 1] = ".";
+              moved = true;
+            }
+          }
+        }
+      } while (moved);
+      break;
+  }
+}
+
+function performSpinCycle(platform) {
+  const directions = ["north", "west", "south", "east"];
+  for (let direction of directions) {
+    tiltPlatform(platform, direction);
+  }
+}
+
+function serializePlatform(platform) {
+  return platform.map((row) => row.join("")).join("\n");
+}
+
 // Part 1
 function part1(lines) {
   let mirror = parseInput(lines);
@@ -51,13 +130,54 @@ function part1(lines) {
 
 // Part 2
 function part2(lines) {
-  return 0;
+  let platform = parseInput(lines);
+  const totalCycles = 1000000000;
+  const seenStates = new Map();
+  let cycleCount = 0;
+  let periodStart = -1;
+  let potentialPeriod = 0;
+
+  while (cycleCount < totalCycles) {
+    performSpinCycle(platform);
+    const serialized = serializePlatform(platform);
+
+    if (seenStates.has(serialized)) {
+      if (periodStart === -1) {
+        // First time seeing a repeat; set up for confirmation
+        periodStart = seenStates.get(serialized);
+        potentialPeriod = cycleCount - periodStart;
+        seenStates.clear(); // Clear to re-record states for confirmation
+      } else if (cycleCount - periodStart === potentialPeriod) {
+        // Repeat confirmed
+        break;
+      }
+    }
+
+    if (periodStart === -1 || cycleCount < periodStart + potentialPeriod) {
+      seenStates.set(serialized, cycleCount);
+    }
+
+    cycleCount++;
+  }
+
+  // Calculate the remaining cycles after skipping
+  const cyclesToSkip =
+    Math.floor((totalCycles - cycleCount) / potentialPeriod) * potentialPeriod;
+  cycleCount += cyclesToSkip;
+
+  // Perform the remaining cycles
+  const remainingCycles = totalCycles - cycleCount;
+  for (let i = 0; i < remainingCycles; i++) {
+    performSpinCycle(platform);
+  }
+
+  return calculateLoad(platform);
 }
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8");
-console.log("Part 1:", part1(lines));
-// console.log("Part 2:", part2(lines));
+// console.log("Part 1:", part1(lines));
+console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
