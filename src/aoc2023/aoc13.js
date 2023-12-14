@@ -110,16 +110,13 @@ function part1(lines) {
 
 // Part 2
 function part2(lines) {
-  const patterns = parseInput(lines);
-  const totalScore = summarizePatterns(patterns);
-
-  return totalScore;
+  return 0;
 }
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8");
 // console.log("Part 1:", part1(lines));
-console.log("Part 2:", part2(lines));
+// console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
