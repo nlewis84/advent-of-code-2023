@@ -6,6 +6,10 @@ const {
   multiplyBy17,
   findRemainderOfDivision,
   solve,
+  processCommand,
+  removeLens,
+  insertOrUpdateLens,
+  calculateTotalFocusingPower,
 } = require("../../../src/aoc2023/aoc15");
 const { aoc_input, aoc_test_input } = require("../../../config");
 const { test, expect } = require("@jest/globals");
@@ -70,4 +74,22 @@ test("solve", () => {
   expect(solve(input9)).toBe(48);
   expect(solve(input10)).toBe(214);
   expect(solve(input11)).toBe(231);
+});
+
+test("calculate total focusing power", () => {
+  const input = [
+    [
+      { label: "ot", focalLength: 9 }, // 1 * 1 * 9 = 9
+      { label: "ab", focalLength: 5 }, // 1 * 2 * 5 = 10
+      { label: "pc", focalLength: 6 }, // 1 * 3 * 6 = 18
+    ],
+    [],
+    [],
+    [
+      { label: "qp", focalLength: 3 }, // 4 * 1 * 3 = 12
+      { label: "cm", focalLength: 2 }, // 4 * 2 * 2 = 16
+      { label: "rn", focalLength: 1 }, // 4 * 3 * 1 = 12
+    ],
+  ];
+  expect(calculateTotalFocusingPower(input)).toBe(77); // 9 + 10 + 18 + 12 + 16 + 12 = 77
 });

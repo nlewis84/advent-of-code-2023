@@ -36,7 +36,6 @@ function solve(input) {
   for (let command of commands) {
     // for each command, determine the ASCII code, increase the current value by that amount, multiply the current value by 17, and find the remainder of dividing the current value by 256
     let currentValue = 0;
-    console.log(command);
     for (let character of command) {
       currentValue += determineASCIICode(character);
       currentValue = multiplyBy17(currentValue);
@@ -48,6 +47,60 @@ function solve(input) {
   return commandSum;
 }
 
+function hash(command) {
+  // Input: string; ex: "rn=1"
+  // Output: number; ex: 1320
+  let currentValue = 0;
+  for (let character of command) {
+    currentValue += determineASCIICode(character);
+    currentValue = multiplyBy17(currentValue);
+    currentValue = findRemainderOfDivision(currentValue, 256);
+  }
+  return currentValue;
+}
+
+function processCommand(command, boxes) {
+  const parts = command.split(/[-=]/);
+  const label = parts[0];
+  const operation = command[label.length];
+  const boxIndex = hash(label);
+  const lensIndex = boxes[boxIndex].findIndex((lens) => lens.label === label);
+
+  if (operation === "-") {
+    removeLens(boxIndex, lensIndex, boxes);
+  } else {
+    const focalLength = parseInt(parts[1]);
+    insertOrUpdateLens(boxIndex, lensIndex, { label, focalLength }, boxes);
+  }
+}
+
+// remove a lens from a box
+function removeLens(boxIndex, lensIndex, boxes) {
+  if (lensIndex > -1) {
+    boxes[boxIndex].splice(lensIndex, 1);
+  }
+}
+
+// insert or update a lens in a box
+function insertOrUpdateLens(boxIndex, lensIndex, lens, boxes) {
+  if (lensIndex > -1) {
+    boxes[boxIndex][lensIndex] = lens;
+  } else {
+    boxes[boxIndex].push(lens);
+  }
+}
+
+// calculate the total focusing power
+function calculateTotalFocusingPower(boxes) {
+  let totalFocusingPower = 0;
+  boxes.forEach((box, boxIndex) => {
+    box.forEach((lens, slotIndex) => {
+      totalFocusingPower += (boxIndex + 1) * (slotIndex + 1) * lens.focalLength;
+    });
+  });
+  return totalFocusingPower;
+}
+
 // Part 1
 function part1(lines) {
   const solution = solve(lines);
@@ -55,14 +108,19 @@ function part1(lines) {
 }
 
 // Part 2
-function part2(lines) {
-  return 0;
+function part2(input) {
+  const commands = parseInput(input);
+  const boxes = Array.from({ length: 256 }, () => []);
+
+  commands.forEach((command) => processCommand(command, boxes));
+
+  return calculateTotalFocusingPower(boxes);
 }
 
 // Reading from file and running both parts
-const lines = fs.readFileSync(aoc_input, "utf-8");
+const lines = fs.readFileSync(aoc_test_input, "utf-8");
 console.log("Part 1:", part1(lines));
-// console.log("Part 2:", part2(lines));
+console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
@@ -73,4 +131,8 @@ module.exports = {
   multiplyBy17,
   findRemainderOfDivision,
   solve,
+  processCommand,
+  removeLens,
+  insertOrUpdateLens,
+  calculateTotalFocusingPower,
 };
