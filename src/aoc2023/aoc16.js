@@ -15,10 +15,10 @@ function parseInput(input) {
   return grid;
 }
 
-function simulateBeam(grid) {
+function simulateBeam(grid, startX = 0, startY = 0, startDir = "r") {
   // Input: two-dimensional array; ex: [[".", "|", ".", ".", ".", ".", ".", ".", "."], ["|", ".", "-", ".", ".", ".", ".", ".", "."]]
   // Output: number; ex: 6
-  let beams = [{ x: 0, y: 0, direction: "r" }]; // Initial beam
+  let beams = [{ x: startX, y: startY, direction: startDir }];
   const visited = {};
 
   while (beams.length > 0) {
@@ -92,6 +92,48 @@ function move(beam, dir) {
   }
 }
 
+function findBestStartingPosition(grid) {
+  let maxEnergizedTiles = 0;
+  let bestPosition = null;
+
+  // Define functions to get starting positions and directions for each edge
+  const getTopEdgeStarts = () =>
+    Array(grid[0].length)
+      .fill(0)
+      .map((_, x) => ({ x, y: 0, dir: "d" }));
+  const getBottomEdgeStarts = () =>
+    Array(grid[0].length)
+      .fill(0)
+      .map((_, x) => ({ x, y: grid.length - 1, dir: "u" }));
+  const getLeftEdgeStarts = () =>
+    Array(grid.length)
+      .fill(0)
+      .map((_, y) => ({ x: 0, y, dir: "r" }));
+  const getRightEdgeStarts = () =>
+    Array(grid.length)
+      .fill(0)
+      .map((_, y) => ({ x: grid[0].length - 1, y, dir: "l" }));
+
+  // Combine all edge starts
+  const allStarts = [
+    ...getTopEdgeStarts(),
+    ...getBottomEdgeStarts(),
+    ...getLeftEdgeStarts(),
+    ...getRightEdgeStarts(),
+  ];
+
+  // Iterate over all starting positions
+  for (const start of allStarts) {
+    const energizedTiles = simulateBeam(grid, start.x, start.y, start.dir);
+    if (energizedTiles > maxEnergizedTiles) {
+      maxEnergizedTiles = energizedTiles;
+      bestPosition = start;
+    }
+  }
+
+  return { maxEnergizedTiles, bestPosition };
+}
+
 // Part 1
 function part1(lines) {
   const grid = parseInput(lines);
@@ -102,13 +144,17 @@ function part1(lines) {
 
 // Part 2
 function part2(input) {
-  return 0;
+  const grid = parseInput(input);
+  const { maxEnergizedTiles, bestPosition } = findBestStartingPosition(grid);
+
+  console.log("Best starting position:", bestPosition);
+  return maxEnergizedTiles;
 }
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8");
-// console.log("Part 1:", part1(lines));
-// console.log("Part 2:", part2(lines));
+console.log("Part 1:", part1(lines));
+console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
