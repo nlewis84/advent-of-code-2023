@@ -119,8 +119,8 @@ function part2(input) {
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_test_input, "utf-8");
-console.log("Part 1:", part1(lines));
-console.log("Part 2:", part2(lines));
+// console.log("Part 1:", part1(lines));
+// console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
