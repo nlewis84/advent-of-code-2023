@@ -15,10 +15,17 @@ function parseInput(input) {
     3: [0, -1],
   };
 
-  return lines.map((line) => {
+  const steps1 = lines.map((line) => {
     const [direction, meters, _] = line.split(" ");
     return [directions[direction], parseInt(meters, 10)];
   });
+
+  const steps2 = lines.map((line) => {
+    const colorCode = line.split(" ")[2];
+    return [directions[colorCode[7]], parseInt(colorCode.substring(2, 7), 16)];
+  });
+
+  return [steps1, steps2];
 }
 
 function calculateLagoonCapacity(diggingSteps) {
@@ -36,20 +43,22 @@ function calculateLagoonCapacity(diggingSteps) {
 
 // Part 1
 function part1(lines) {
-  const directions = parseInput(lines);
-  const part1Result = calculateLagoonCapacity(directions);
-  return part1Result;
+  const [steps1] = parseInput(lines);
+  const part1Result = calculateLagoonCapacity(steps1);
+  return [part1Result];
 }
 
 // Part 2
 function part2(lines) {
-  return 0;
+  const [_, steps2] = parseInput(lines);
+  const part2Result = calculateLagoonCapacity(steps2);
+  return [part2Result];
 }
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8");
 console.log("Part 1:", part1(lines));
-// console.log("Part 2:", part2(lines));
+console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
