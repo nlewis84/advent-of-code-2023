@@ -1,8 +1,53 @@
-const { part1, part2 } = require("../../../src/aoc2023/aoc18");
+const {
+  part1,
+  part2,
+  parseInput,
+  calculateLagoonCapacity,
+} = require("../../../src/aoc2023/aoc18");
 const { aoc_input, aoc_test_input } = require("../../../config");
 const { test, expect } = require("@jest/globals");
 const fs = require("fs");
 
-test(1 + 1, () => {
-  expect(1 + 1).toBe(2);
+test("parseInput", () => {
+  const input = `R 6 (#70c710)\nD 5 (#0dc571)\nL 2 (#5713f0)\nD 2 (#d2c081)\nR 2 (#59c680)\nD 2 (#411b91)\nL 5 (#8ceee2)\nU 2 (#caa173)\nL 1 (#1b58a2)\nU 2 (#caa171)\nR 2 (#7807d2)\nU 3 (#a77fa3)\nL 2 (#015232)\nU 2 (#7a21e3)`;
+
+  const expected = [
+    [[1, 0], 6],
+    [[0, 1], 5],
+    [[-1, 0], 2],
+    [[0, 1], 2],
+    [[1, 0], 2],
+    [[0, 1], 2],
+    [[-1, 0], 5],
+    [[0, -1], 2],
+    [[-1, 0], 1],
+    [[0, -1], 2],
+    [[1, 0], 2],
+    [[0, -1], 3],
+    [[-1, 0], 2],
+    [[0, -1], 2],
+  ];
+
+  expect(parseInput(input)).toEqual(expected);
+});
+
+test("calculateLagoonCapacity", () => {
+  const input = [
+    [[1, 0], 6],
+    [[0, 1], 5],
+    [[-1, 0], 2],
+    [[0, 1], 2],
+    [[1, 0], 2],
+    [[0, 1], 2],
+    [[-1, 0], 5],
+    [[0, -1], 2],
+    [[-1, 0], 1],
+    [[0, -1], 2],
+    [[1, 0], 2],
+    [[0, -1], 3],
+    [[-1, 0], 2],
+    [[0, -1], 2],
+  ];
+
+  expect(calculateLagoonCapacity(input)).toEqual(62);
 });
