@@ -9,6 +9,10 @@ function parseInput(input) {
     D: [0, 1],
     L: [-1, 0],
     U: [0, -1],
+    0: [1, 0],
+    1: [0, 1],
+    2: [-1, 0],
+    3: [0, -1],
   };
 
   const steps1 = lines.map((line) => {
