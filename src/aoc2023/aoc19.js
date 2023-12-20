@@ -107,19 +107,47 @@ function processPart(part, workflows) {
   }
 }
 
-function main(input) {
-  const workflows = parseWorkflows(input);
-  const parts = parseParts(input);
-  let totalRating = 0;
+function countAccepted(workflows, ranges, currentWorkflow = "in") {
+  if (currentWorkflow === "A") {
+    // If the current workflow is 'A', calculate the product of the range sizes
+    return Object.values(ranges).reduce(
+      (product, [lo, hi]) => product * (hi - lo + 1),
+      1
+    );
+  }
 
-  parts.forEach((part) => {
-    const result = processPart(part, workflows);
-    if (result === "accepted") {
-      totalRating += Object.values(part).reduce((sum, val) => sum + val, 0);
+  if (currentWorkflow === "R") {
+    // If the current workflow is 'R', no combinations are accepted
+    return 0;
+  }
+
+  const rules = workflows[currentWorkflow];
+  let total = 0;
+
+  for (const rule of rules) {
+    if (!rule.condition) {
+      total += countAccepted(workflows, ranges, rule.action);
+      continue;
     }
-  });
 
-  return totalRating;
+    const [varName, operator, valueStr] = rule.condition.split(/([<>])/);
+    const value = parseInt(valueStr, 10);
+    const [lo, hi] = ranges[varName];
+
+    if (operator === "<" && lo < value) {
+      const newRanges = { ...ranges, [varName]: [lo, value - 1] };
+      total += countAccepted(workflows, newRanges, rule.action);
+    }
+
+    if (operator === ">" && hi > value) {
+      const newRanges = { ...ranges, [varName]: [value + 1, hi] };
+      total += countAccepted(workflows, newRanges, rule.action);
+    }
+
+    ranges[varName] = operator === "<" ? [value, hi] : [lo, value];
+  }
+
+  return total;
 }
 
 // Part 1
@@ -139,14 +167,21 @@ function part1(lines) {
 }
 
 // Part 2
-function part2(lines) {
-  return 0;
+function part2(workflows) {
+  const parsedWorkflows = parseWorkflows(workflows);
+  const initialRanges = {
+    x: [1, 4000],
+    m: [1, 4000],
+    a: [1, 4000],
+    s: [1, 4000],
+  };
+  return countAccepted(parsedWorkflows, initialRanges);
 }
 
 // Reading from file and running both parts
-const lines = fs.readFileSync(aoc_test_input, "utf-8");
-console.log("Part 1:", part1(lines));
-// console.log("Part 2:", part2(lines));
+const lines = fs.readFileSync(aoc_input, "utf-8");
+// console.log("Part 1:", part1(lines));
+console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
