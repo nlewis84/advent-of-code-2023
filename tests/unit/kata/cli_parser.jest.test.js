@@ -7,4 +7,6 @@ test("parse takes a string", () => {
   parse("quit");
   expect(parse("--foo bar")).toEqual([{ foo: "bar" }]);
   parse("quit");
+  expect(parse("--number 1")).toEqual([{ number: 1 }]);
+  parse("quit");
 });

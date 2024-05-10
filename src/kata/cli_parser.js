@@ -26,6 +26,17 @@ function parse(input) {
   if (input.startsWith("--")) {
     // if the input is a flag with a value, like --foo bar, return { foo: "bar" }
     if (input.includes(" ")) {
+      // the value is an integer, return the value as an integer
+      if (!isNaN(input.slice(input.indexOf(" ") + 1))) {
+        return [
+          {
+            [input.slice(2, input.indexOf(" "))]: parseInt(
+              input.slice(input.indexOf(" ") + 1)
+            ),
+          },
+        ];
+      }
+
       return [
         {
           [input.slice(2, input.indexOf(" "))]: input.slice(
