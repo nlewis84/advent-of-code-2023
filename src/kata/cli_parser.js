@@ -1,4 +1,3 @@
-const fs = require("fs");
 const readline = require("readline");
 
 const rl = readline.createInterface({
@@ -18,10 +17,12 @@ function input(options) {
 
 function parse(input) {
   // if input is quit, close the readline interface
+  // Added this to make testing easier
   if (input === "quit") {
     rl.close();
   }
 
+  // Step 5: Support String and Array inputs
   // if the input is an array, process each element separately
   if (Array.isArray(input)) {
     let result = {};
@@ -34,6 +35,7 @@ function parse(input) {
     return result;
   }
 
+  // Step 4: Support Multiple Flags
   // split the input by spaces
   let parts = input.split(" ");
   let result = {};
@@ -59,10 +61,13 @@ function parse(input) {
 }
 
 function parser(input) {
+  // Step 1: Support Simple Flags
   // a simple flag should return as a json object with the key as true
   if (input.startsWith("--")) {
+    // Step 2: Support Composite Flags
     // if the input is a flag with a value, like --foo bar, return { foo: "bar" }
     if (input.includes(" ")) {
+      // Step 3: Support Integers
       // the value is an integer, return the value as an integer
       if (!isNaN(input.slice(input.indexOf(" ") + 1))) {
         return [
@@ -88,6 +93,5 @@ function parser(input) {
 }
 
 module.exports = {
-  input,
   parse,
 };
