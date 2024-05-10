@@ -22,7 +22,21 @@ function parse(input) {
     rl.close();
   }
 
-  return input.split("\n").filter((line) => line);
+  // a simple flag should return as a json object with the key as true
+  if (input.startsWith("--")) {
+    // if the input is a flag with a value, like --foo bar, return { foo: "bar" }
+    if (input.includes(" ")) {
+      return [
+        {
+          [input.slice(2, input.indexOf(" "))]: input.slice(
+            input.indexOf(" ") + 1
+          ),
+        },
+      ];
+    }
+
+    return [{ [input.slice(2)]: true }];
+  }
 }
 
 module.exports = {
