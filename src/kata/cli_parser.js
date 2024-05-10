@@ -22,6 +22,31 @@ function parse(input) {
     rl.close();
   }
 
+  // split the input by spaces
+  let parts = input.split(" ");
+  let result = {};
+
+  for (let i = 0; i < parts.length; i++) {
+    // if the part starts with "--", it's a flag
+    if (parts[i].startsWith("--")) {
+      let flag = parts[i];
+
+      // if the next part doesn't start with "--", it's a value
+      if (parts[i + 1] && !parts[i + 1].startsWith("--")) {
+        flag += " " + parts[i + 1];
+        i++; // skip the next part because it's a value
+      }
+
+      // parse the flag and its potential value, and add it to the result
+      let parsed = parser(flag);
+      Object.assign(result, parsed[0]);
+    }
+  }
+
+  return result;
+}
+
+function parser(input) {
   // a simple flag should return as a json object with the key as true
   if (input.startsWith("--")) {
     // if the input is a flag with a value, like --foo bar, return { foo: "bar" }

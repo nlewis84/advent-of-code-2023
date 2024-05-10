@@ -3,10 +3,16 @@ const { test, expect } = require("@jest/globals");
 
 // test the parse function
 test("parse takes a string", () => {
-  expect(parse("--foo")).toEqual([{ foo: true }]);
+  expect(parse("--foo")).toEqual({ foo: true });
   parse("quit");
-  expect(parse("--foo bar")).toEqual([{ foo: "bar" }]);
+  expect(parse("--foo bar")).toEqual({ foo: "bar" });
   parse("quit");
-  expect(parse("--number 1")).toEqual([{ number: 1 }]);
+  expect(parse("--number 1")).toEqual({ number: 1 });
+  parse("quit");
+  expect(parse("--foo --bar baz --number 1")).toEqual({
+    bar: "baz",
+    foo: true,
+    number: 1,
+  });
   parse("quit");
 });
