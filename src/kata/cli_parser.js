@@ -22,6 +22,18 @@ function parse(input) {
     rl.close();
   }
 
+  // if the input is an array, process each element separately
+  if (Array.isArray(input)) {
+    let result = {};
+
+    for (let element of input) {
+      let parsed = parse(element);
+      Object.assign(result, parsed);
+    }
+
+    return result;
+  }
+
   // split the input by spaces
   let parts = input.split(" ");
   let result = {};
