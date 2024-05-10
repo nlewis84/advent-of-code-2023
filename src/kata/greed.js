@@ -26,15 +26,15 @@ const SCORING = [
 // Rolling the Dice
 // Return an array of DICE random numbers between 1 and 6
 const roll = () => {
-  console.log("Rolling the Dice");
+  // console.log("Rolling the Dice");
   return Array.from({ length: DICE }, () => Math.floor(Math.random() * 6) + 1);
 };
 
 // Scoring the Dice
 // First roll the die, then score the die, going through SCORING array in order of index (most points to least)
 const score = (dice) => {
-  console.log("Dice: ", dice);
-  console.log("Scoring the Dice");
+  // console.log("Dice: ", dice);
+  // console.log("Scoring the Dice");
 
   let score = 0;
   let counts = {};
