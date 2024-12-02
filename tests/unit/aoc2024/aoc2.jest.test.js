@@ -22,4 +22,23 @@ test("part 1 processes lines correctly", () => {
   expect(part1(testInput)).toBe(numberOfSafeReports);
 });
 
-test("part 2 processes lines correctly", () => {});
+test("part 2 processes lines correctly", () => {
+  // works the same as part 1, but it can accept a single BAD level (number) in a report (row)
+  // The first row is safe
+  // The 2nd row is unsafe even with removing a bad level
+  // The 3rd row is unsafe even with removing a bad level
+  // The 4th row is safe with removing a bad level (3)
+  // The 5th row is safe with removing a bad level (4)
+  // The 6th row is safe
+
+  const testInput = `7 6 4 2 1
+1 2 7 8 9
+9 7 6 2 1
+1 3 2 4 5
+8 6 4 4 1
+1 3 6 7 9`;
+
+  const numberOfSafeReports = 4;
+
+  expect(part2(testInput)).toBe(numberOfSafeReports);
+});
