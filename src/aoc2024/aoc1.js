@@ -33,12 +33,28 @@ function part1(input) {
 }
 
 // Part 2
-function part2(lines) {
-  return 0;
+function part2(input) {
+  // Ensure input is an array of lines
+  const lines = Array.isArray(input) ? input : input.trim().split("\n");
+
+  // Map each line to a pair of numbers
+  const pairs = lines.map((line) => line.trim().split(/\s+/).map(Number));
+
+  // Extract columns
+  const column1 = pairs.map((pair) => pair[0]);
+  const column2 = pairs.map((pair) => pair[1]);
+
+  // Calculate the result based on the frequency of column1 values in column2
+  const result = column1.reduce((acc, curr) => {
+    const countInColumn2 = column2.filter((value) => value === curr).length;
+    return acc + countInColumn2 * curr;
+  }, 0);
+
+  return result;
 }
 
 // Reading from file and running both parts
-const lines = fs.readFileSync(aoc_test_input, "utf-8").split("\n");
+const lines = fs.readFileSync(aoc_input, "utf-8").split("\n");
 console.log("Part 1:", part1(lines));
 console.log("Part 2:", part2(lines));
 
