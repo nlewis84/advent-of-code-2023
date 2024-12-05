@@ -59,6 +59,21 @@ function findOccurrences(grid, word) {
   return count;
 }
 
+function findCenters(grid) {
+  const centers = [];
+
+  for (let row = 1; row < grid.length - 1; row++) {
+    for (let col = 1; col < grid[row].length - 1; col++) {
+      if (grid[row][col] === "A") {
+        centers.push([row, col]);
+      }
+    }
+  }
+
+  // console.log("Centers:", centers);
+  return centers;
+}
+
 // Part 1
 function part1(lines) {
   const grid = lines.map((row) => row.split(""));
@@ -67,7 +82,26 @@ function part1(lines) {
 
 // Part 2
 function part2(lines) {
-  return 0;
+  const grid = lines.map((row) => row.split(""));
+  const centers = findCenters(grid);
+  let count = 0;
+
+  for (const [row, col] of centers) {
+    // Check diagonal directions
+    const diag1Valid =
+      isWordInDirection(grid, "MAS", row - 1, col - 1, [1, 1]) ||
+      isWordInDirection(grid, "SAM", row - 1, col - 1, [1, 1]);
+
+    const diag2Valid =
+      isWordInDirection(grid, "MAS", row - 1, col + 1, [1, -1]) ||
+      isWordInDirection(grid, "SAM", row - 1, col + 1, [1, -1]);
+
+    if (diag1Valid && diag2Valid) {
+      count++;
+    }
+  }
+
+  return count;
 }
 
 // Reading from file and running both parts
@@ -82,4 +116,5 @@ module.exports = {
   getDirectionVectors,
   isWordInDirection,
   findOccurrences,
+  findCenters,
 };
