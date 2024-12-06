@@ -3,6 +3,10 @@ const {
   simulatePatrol,
   parseMap,
   countVisitedPositions,
+  detectLoop,
+  findObstructionCandidates,
+  simulateWithObstruction,
+  findLoopObstructionPositions,
   part1,
   part2,
 } = require("../../../src/aoc2024/aoc6");
@@ -93,4 +97,142 @@ test("Full simulation works for example input", () => {
   const distinctPositions = countVisitedPositions(visited);
 
   expect(distinctPositions).toBe(6);
+});
+
+test("findLoopObstructionPositions finds correct obstructions", () => {
+  const input = `
+    ....#.....
+    .........#
+    ..........
+    ..#.......
+    .......#..
+    ..........
+    .#..^.....
+    ........#.
+    #.........
+    ......#...
+  `;
+  const map = parseMap(input);
+  const loopPositions = findLoopObstructionPositions(map);
+
+  // Validate the correct number of obstructions
+  expect(loopPositions.length).toBe(6);
+});
+
+test("detectLoop identifies a simple loop", () => {
+  const path = [
+    { position: "1,1", direction: "up" },
+    { position: "1,2", direction: "up" },
+    { position: "1,3", direction: "right" },
+    { position: "1,1", direction: "up" },
+    { position: "1,2", direction: "up" },
+    { position: "1,3", direction: "right" },
+  ];
+
+  expect(detectLoop(path)).toBe(true);
+});
+
+test("detectLoop does not falsely detect a loop with stalls", () => {
+  const path = [
+    { position: "1,1", direction: "up" },
+    { position: "1,2", direction: "up" },
+    { position: "1,3", direction: "right" },
+    { position: "1,3", direction: "down" }, // Stalls at same position
+    { position: "1,2", direction: "down" },
+  ];
+
+  expect(detectLoop(path)).toBe(false);
+});
+
+test("simulateWithObstruction detects a loop caused by an obstruction", () => {
+  const input = `
+  ....#.....
+  .........#
+  ..........
+  ..#.......
+  .......#..
+  ..........
+  .#..^.....
+  ........#.
+  #.........
+  ......#...
+  `;
+
+  const map = parseMap(input);
+  const obstruction = { x: 1, y: 8 }; // Place an obstruction that causes a loop
+  const path = simulateWithObstruction(map, obstruction);
+
+  expect(detectLoop(path)).toBe(true);
+});
+
+test("simulateWithObstruction identifies no loop with no obstruction", () => {
+  const input = `
+  ....#.....
+  .........#
+  ..........
+  ..#.......
+  .......#..
+  ..........
+  .#..^.....
+  ........#.
+  #.........
+  ......#...
+  `;
+
+  const map = parseMap(input);
+  const obstruction = { x: 9, y: 9 }; // Place an obstruction that does not cause a loop
+  const path = simulateWithObstruction(map, obstruction);
+
+  expect(detectLoop(path)).toBe(false);
+});
+
+test("findObstructionCandidates returns correct candidates", () => {
+  const grid = [
+    [".", ".", ".", "#"],
+    [".", ".", ".", "."],
+    [".", ".", ".", "."],
+  ];
+
+  const guard = { x: 1, y: 1, direction: "right" };
+  const candidates = findObstructionCandidates(grid, guard);
+
+  expect(candidates).toEqual([
+    { x: 0, y: 0 },
+    { x: 1, y: 0 },
+    { x: 2, y: 0 },
+    { x: 0, y: 1 },
+    { x: 2, y: 1 },
+    { x: 3, y: 1 },
+    { x: 0, y: 2 },
+    { x: 1, y: 2 },
+    { x: 2, y: 2 },
+    { x: 3, y: 2 },
+  ]);
+});
+
+test("findLoopObstructionPositions finds correct obstructions", () => {
+  const input = `
+    ....#.....
+    .........#
+    ..........
+    ..#.......
+    .......#..
+    ..........
+    .#..^.....
+    ........#.
+    #.........
+    ......#...
+  `;
+  const map = parseMap(input);
+  const loopPositions = findLoopObstructionPositions(map);
+
+  // Replace with actual observed positions
+  expect(loopPositions).toEqual([
+    { x: 3, y: 6 },
+    { x: 6, y: 7 },
+    { x: 7, y: 7 },
+    { x: 1, y: 8 },
+    { x: 3, y: 8 },
+    { x: 7, y: 9 },
+  ]);
 });
