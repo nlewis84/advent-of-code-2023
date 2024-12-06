@@ -110,3 +110,30 @@ Runs all jest and vitest tests.
 - Applies the linting rules in the `.eslintrc` file
 - Includes a caching mechanism to speed up subsequent lint runs
   - Stores the cache in the `./node_modules/.cache/eslint` directory.
+
+## Setting Up for Future Years of Advent of Code
+
+To prepare for the next year's Advent of Code:
+
+- Create New Folders:
+  - Create a new `src/<year>` folder.
+  - Create a new `tests/unit/<year>` folder.
+- Copy Over Template Files:
+  - Copy `template.js`, `.testInput`, and `.input` from the current year into the new `src/<year>` folder.
+  - Copy a test file like `aoc1.jest.test.js` from a previous year into the new `tests/unit/<year>` folder.
+- Update Imports:
+  - Modify the test file to import the new year's part 1 and part 2 solutions.
+- Configure `.env`:
+  - Ensure the `.env` file points to the new `src/<year>` folder.
+- Provide Inputs:
+  - Paste your test input into the `.testInput` file.
+  - When ready, paste the real input into `.input`.
+- Run Tests:
+  - To test, run:
+
+```bash
+yarn jest tests/unit/<year>
+```
+
+- Switch to Real Input:
+  - When testing against real input, paste it into the `.input` file.
