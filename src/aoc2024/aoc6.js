@@ -80,6 +80,28 @@ function countVisitedPositions(visited) {
   return visited.size;
 }
 
+function isLooping(grid, guard, obstruction) {
+  const tempGrid = grid.map((row) => [...row]);
+  tempGrid[obstruction.y][obstruction.x] = "#";
+
+  const visitedStates = new Set();
+  let currentGuard = { ...guard };
+
+  while (true) {
+    const state = `${currentGuard.x},${currentGuard.y},${currentGuard.direction}`;
+    if (visitedStates.has(state)) {
+      return true; // Loop detected
+    }
+    visitedStates.add(state);
+
+    const nextGuard = moveGuard(currentGuard, tempGrid);
+    if (!nextGuard) {
+      return false; // Guard exits the grid
+    }
+    currentGuard = nextGuard;
+  }
+}
+
 // Part 1
 function part1(lines) {
   const map = parseMap(lines.join("\n"));
@@ -89,13 +111,30 @@ function part1(lines) {
 
 // Part 2
 function part2(lines) {
-  return 0;
+  const map = parseMap(lines.join("\n"));
+  const { grid, guard } = map;
+
+  let loopCount = 0;
+
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      if (grid[y][x] === "#" || (x === guard.x && y === guard.y)) {
+        continue;
+      }
+
+      if (isLooping(grid, guard, { x, y })) {
+        loopCount++;
+      }
+    }
+  }
+
+  return loopCount;
 }
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8").split("\n");
-console.log("Part 1:", part1(lines));
-console.log("Part 2:", part2(lines));
+// console.log("Part 1:", part1(lines));
+// console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
@@ -105,4 +144,5 @@ module.exports = {
   moveGuard,
   simulatePatrol,
   countVisitedPositions,
+  isLooping,
 };

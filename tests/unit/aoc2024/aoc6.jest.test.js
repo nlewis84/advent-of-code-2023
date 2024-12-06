@@ -3,6 +3,7 @@ const {
   simulatePatrol,
   parseMap,
   countVisitedPositions,
+  isLooping,
   part1,
   part2,
 } = require("../../../src/aoc2024/aoc6");
@@ -93,4 +94,34 @@ test("Full simulation works for example input", () => {
   const distinctPositions = countVisitedPositions(visited);
 
   expect(distinctPositions).toBe(6);
+});
+
+test("isLooping correctly identifies looping behavior", () => {
+  const input = `
+  ....#.....
+  ....^....#
+  ..........
+  ........#.
+  `;
+
+  const map = parseMap(input);
+  expect(isLooping(map.grid, map.guard, { x: 3, y: 2 })).toBe(true);
+  expect(isLooping(map.grid, map.guard, { x: 0, y: 0 })).toBe(false);
+});
+
+test("part2 identifies all valid loop-causing positions", () => {
+  const input = `
+    ....#.....
+    .........#
+    ..........
+    ..#.......
+    .......#..
+    ..........
+    .#..^.....
+    ........#.
+    #.........
+    ......#...
+  `;
+
+  expect(part2(input.trim().split("\n"))).toBe(6);
 });
