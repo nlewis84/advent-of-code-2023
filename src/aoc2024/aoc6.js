@@ -111,6 +111,8 @@ function part1(lines) {
 
 // Part 2
 function part2(lines) {
+  console.time("part2 Execution Time"); // Start timing
+
   const map = parseMap(lines.join("\n"));
   const { grid, guard } = map;
 
@@ -128,13 +130,15 @@ function part2(lines) {
     }
   }
 
+  console.timeEnd("part2 Execution Time"); // End timing
+
   return loopCount;
 }
 
 // Reading from file and running both parts
 const lines = fs.readFileSync(aoc_input, "utf-8").split("\n");
 // console.log("Part 1:", part1(lines));
-// console.log("Part 2:", part2(lines));
+console.log("Part 2:", part2(lines));
 
 module.exports = {
   part1,
