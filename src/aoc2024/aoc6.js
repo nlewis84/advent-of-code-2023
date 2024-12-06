@@ -175,38 +175,133 @@ function detectLoop(path) {
   return false;
 }
 
-function findLoopObstructionPositions(map) {
-  const { grid } = map;
-  const candidates = findObstructionCandidates(grid, map.guard);
+function precomputeKeyPoints(grid) {
+  const keyPoints = Array.from({ length: grid.length }, () =>
+    Array.from({ length: grid[0].length }, () => ({
+      up: null,
+      down: null,
+      left: null,
+      right: null,
+    }))
+  );
 
-  const validLoopPositions = [];
-  let loopCounter = 0;
+  const rows = grid.length;
+  const cols = grid[0].length;
 
-  console.time("findLoopObstructionPositions"); // Start timer
-  console.log(`Total candidates to test: ${candidates.length}`);
+  // Precompute for each direction
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      if (grid[y][x] === "#") continue; // Skip obstacles
 
-  const startTime = Date.now();
+      // Up
+      for (let ny = y - 1; ny >= 0; ny--) {
+        if (grid[ny][x] === "#") {
+          keyPoints[y][x].up = { x, y: ny };
+          break;
+        }
+      }
+      if (keyPoints[y][x].up === null) keyPoints[y][x].up = { x, y: -1 };
 
-  for (const [index, obstruction] of candidates.entries()) {
-    if (index % 100 === 0) {
-      const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
-      console.log(
-        `Processed ${index + 1}/${
-          candidates.length
-        } candidates... Elapsed time: ${elapsedSeconds}s`
-      );
-    }
+      // Down
+      for (let ny = y + 1; ny < rows; ny++) {
+        if (grid[ny][x] === "#") {
+          keyPoints[y][x].down = { x, y: ny };
+          break;
+        }
+      }
+      if (keyPoints[y][x].down === null) keyPoints[y][x].down = { x, y: rows };
 
-    const path = simulateWithObstruction(map, obstruction);
+      // Left
+      for (let nx = x - 1; nx >= 0; nx--) {
+        if (grid[y][nx] === "#") {
+          keyPoints[y][x].left = { x: nx, y };
+          break;
+        }
+      }
+      if (keyPoints[y][x].left === null) keyPoints[y][x].left = { x: -1, y };
 
-    if (detectLoop(path)) {
-      validLoopPositions.push(obstruction);
-      loopCounter++;
+      // Right
+      for (let nx = x + 1; nx < cols; nx++) {
+        if (grid[y][nx] === "#") {
+          keyPoints[y][x].right = { x: nx, y };
+          break;
+        }
+      }
+      if (keyPoints[y][x].right === null)
+        keyPoints[y][x].right = { x: cols, y };
     }
   }
 
-  console.timeEnd("findLoopObstructionPositions"); // End timer
-  console.log(`Total loops detected: ${loopCounter}`);
+  return keyPoints;
+}
+
+function moveGuardFast(guard, keyPoints, grid) {
+  const directions = ["up", "right", "down", "left"];
+  const { x, y, direction } = guard;
+
+  const keyPoint = keyPoints[y][x][direction];
+  if (!keyPoint) return null;
+
+  // Move guard directly to the next key point
+  const newX = keyPoint.x;
+  const newY = keyPoint.y;
+
+  // Check for out-of-bounds
+  if (newY < 0 || newY >= grid.length || newX < 0 || newX >= grid[0].length) {
+    return null;
+  }
+
+  // Check for obstacles
+  if (grid[newY][newX] === "#") {
+    const newDirection =
+      directions[(directions.indexOf(direction) + 1) % directions.length];
+    return { x, y, direction: newDirection }; // Guard turns right without moving
+  }
+
+  // Move forward
+  return { x: newX, y: newY, direction };
+}
+
+function simulateWithObstructionFast(map, obstruction, keyPoints) {
+  const { grid, guard } = map;
+  const gridCopy = grid.map((row) => [...row]);
+  gridCopy[obstruction.y][obstruction.x] = "#";
+
+  const path = [];
+  let currentGuard = { ...guard };
+  let stepCounter = 0;
+
+  while (currentGuard) {
+    stepCounter++;
+
+    const position = `${currentGuard.x},${currentGuard.y}`;
+    const state = { position, direction: currentGuard.direction };
+    path.push(state);
+
+    if (detectLoop(path)) {
+      return path; // Return the path with a detected loop
+    }
+
+    currentGuard = moveGuardFast(currentGuard, keyPoints, gridCopy);
+  }
+
+  return path; // Return path if no loop detected
+}
+
+function findLoopObstructionPositionsFast(map) {
+  const { grid } = map;
+  const keyPoints = precomputeKeyPoints(grid); // Precompute key points
+  const candidates = findObstructionCandidates(grid, map.guard);
+
+  const validLoopPositions = [];
+
+  for (const obstruction of candidates) {
+    const path = simulateWithObstructionFast(map, obstruction, keyPoints);
+
+    if (detectLoop(path)) {
+      validLoopPositions.push(obstruction);
+    }
+  }
 
   return validLoopPositions;
 }
