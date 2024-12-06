@@ -100,24 +100,45 @@ function simulateWithObstruction(map, obstruction) {
 
   const path = [];
   let currentGuard = { ...guard };
+  let stepCounter = 0;
 
   while (currentGuard) {
+    stepCounter++;
+    if (stepCounter % 1000 === 0) {
+      // Log every 1000 steps
+      console.log(
+        `Guard has taken ${stepCounter} steps for obstruction ${JSON.stringify(
+          obstruction
+        )}`
+      );
+    }
+
     const position = `${currentGuard.x},${currentGuard.y}`;
     const state = { position, direction: currentGuard.direction };
     path.push(state);
 
     if (detectLoop(path)) {
+      console.log(
+        `Loop detected for obstruction ${JSON.stringify(
+          obstruction
+        )} after ${stepCounter} steps.`
+      );
       return path; // Return the path with a detected loop
     }
 
     currentGuard = moveGuard(currentGuard, gridCopy);
   }
 
+  console.log(
+    `No loop detected for obstruction ${JSON.stringify(
+      obstruction
+    )} after ${stepCounter} steps.`
+  );
   return path; // Return path if no loop detected
 }
 
 function detectLoop(path) {
-  const seen = new Map(); // Track visited positions and their states (position + direction)
+  const seen = new Map();
 
   for (let i = 0; i < path.length; i++) {
     const { position, direction } = path[i];
@@ -125,12 +146,10 @@ function detectLoop(path) {
     if (seen.has(position)) {
       const previousState = seen.get(position);
 
-      // Check if revisiting the same position with the same direction
       if (previousState.direction === direction) {
         const loopStart = previousState.index;
-
-        // Check for a repeating pattern
         const loopLength = i - loopStart;
+
         const segment = path.slice(loopStart, i);
         const nextSegment = path.slice(i, i + loopLength);
 
@@ -142,16 +161,18 @@ function detectLoop(path) {
               step.direction === segment[idx].direction
           )
         ) {
-          return true; // Confirm a valid loop
+          console.log(
+            `Confirmed loop at position ${position} with direction ${direction}`
+          );
+          return true;
         }
       }
     }
 
-    // Record the current state (position + direction)
     seen.set(position, { direction, index: i });
   }
 
-  return false; // No loop detected
+  return false;
 }
 
 function findLoopObstructionPositions(map) {
@@ -159,14 +180,33 @@ function findLoopObstructionPositions(map) {
   const candidates = findObstructionCandidates(grid, map.guard);
 
   const validLoopPositions = [];
+  let loopCounter = 0;
 
-  for (const obstruction of candidates) {
+  console.time("findLoopObstructionPositions"); // Start timer
+  console.log(`Total candidates to test: ${candidates.length}`);
+
+  const startTime = Date.now();
+
+  for (const [index, obstruction] of candidates.entries()) {
+    if (index % 100 === 0) {
+      const elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.log(
+        `Processed ${index + 1}/${
+          candidates.length
+        } candidates... Elapsed time: ${elapsedSeconds}s`
+      );
+    }
+
     const path = simulateWithObstruction(map, obstruction);
 
     if (detectLoop(path)) {
       validLoopPositions.push(obstruction);
+      loopCounter++;
     }
   }
+
+  console.timeEnd("findLoopObstructionPositions"); // End timer
+  console.log(`Total loops detected: ${loopCounter}`);
 
   return validLoopPositions;
 }
