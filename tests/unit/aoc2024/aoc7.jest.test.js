@@ -5,6 +5,11 @@ const {
   isValidEquation,
   processEquation,
   calculateCalibrationResult,
+  generateAllOperatorCombinations,
+  evaluateConcatenationEquation,
+  isValidConcatenationEquation,
+  processConcatenationEquation,
+  calculateFullCalibrationResult,
   part1,
   part2,
 } = require("../../../src/aoc2024/aoc7");
@@ -106,4 +111,72 @@ test("part2 solves the example input (same as part1)", () => {
   ];
 
   expect(part2(input)).toBe(3749);
+});
+
+test("generateAllOperatorCombinations generates all combinations of +, *, and ||", () => {
+  const numCount = 3;
+  const expectedOutput = [
+    ["+", "+"],
+    ["+", "*"],
+    ["+", "||"],
+    ["*", "+"],
+    ["*", "*"],
+    ["*", "||"],
+    ["||", "+"],
+    ["||", "*"],
+    ["||", "||"],
+  ];
+
+  expect(generateAllOperatorCombinations(numCount)).toEqual(expectedOutput);
+});
+
+test("evaluateConcatenationEquation evaluates equations with concatenation", () => {
+  const numbers = [6, 8, 6, 15];
+  const operators1 = ["*", "||", "*"];
+  const operators2 = ["||", "+", "||"];
+  const operators3 = ["+", "*", "||"];
+
+  expect(evaluateConcatenationEquation(numbers, operators1)).toBe(7290);
+  expect(evaluateConcatenationEquation(numbers, operators2)).toBe(7415);
+  expect(evaluateConcatenationEquation(numbers, operators3)).toBe(8415);
+});
+
+test("isValidConcatenationEquation checks if an equation is valid", () => {
+  const testValue = 156;
+  const numbers = [15, 6];
+  const operatorCombinationValid = ["||"];
+  const operatorCombinationInvalid = ["+"];
+
+  expect(
+    isValidConcatenationEquation(testValue, numbers, operatorCombinationValid)
+  ).toBe(true);
+  expect(
+    isValidConcatenationEquation(testValue, numbers, operatorCombinationInvalid)
+  ).toBe(false);
+});
+
+test("processConcatenationEquation finds valid test values", () => {
+  const equationValid = {
+    testValue: 7290,
+    numbers: [6, 8, 6, 15],
+  };
+  const equationInvalid = {
+    testValue: 21037,
+    numbers: [9, 7, 18, 13],
+  };
+
+  expect(processConcatenationEquation(equationValid)).toBe(7290);
+  expect(processConcatenationEquation(equationInvalid)).toBe(0);
+});
+
+test("calculateFullCalibrationResult sums valid test values with all operators", () => {
+  const parsedInput = [
+    { testValue: 156, numbers: [15, 6] },
+    { testValue: 7290, numbers: [6, 8, 6, 15] },
+    { testValue: 192, numbers: [17, 8, 14] },
+    { testValue: 101, numbers: [10, 10] },
+  ];
+
+  // Only the first three equations are valid
+  expect(calculateFullCalibrationResult(parsedInput)).toBe(7638);
 });

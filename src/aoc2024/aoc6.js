@@ -111,7 +111,7 @@ function part1(lines) {
 
 // Part 2
 function part2(lines) {
-  console.time("part2 Execution Time");
+  // console.time("part2 Execution Time");
 
   const map = parseMap(lines.join("\n"));
   const { grid, guard } = map;
@@ -130,7 +130,7 @@ function part2(lines) {
     }
   }
 
-  console.timeEnd("part2 Execution Time");
+  // console.timeEnd("part2 Execution Time");
 
   return loopCount;
 }
