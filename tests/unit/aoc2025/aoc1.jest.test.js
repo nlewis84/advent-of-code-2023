@@ -3,7 +3,6 @@ const {
   part2,
   unwrapElfNote,
   spinTheDial,
-  followElfDirection,
   countZerosSpinningLeft,
   countZerosSpinningRight,
   countZerosWhileSpinning,
@@ -58,25 +57,6 @@ test("spinTheDial wraps around when going right from 99", () => {
 test("spinTheDial L10 from 5 wraps to 95", () => {
   const result = spinTheDial("L10", 5);
   expect(result).toBe(95); // 5 - 10 = -5, wraps to 95
-});
-
-// Tests for followElfDirection
-test("followElfDirection R8 increases the number and returns false for equalsStartingNumber", () => {
-  const result = followElfDirection("R8", 11);
-  expect(result.newNumber).toBe(19);
-  expect(result.equalsStartingNumber).toBe(false);
-});
-
-test("followElfDirection L19 from 19 returns 0 and false for equalsStartingNumber", () => {
-  const result = followElfDirection("L19", 19);
-  expect(result.newNumber).toBe(0);
-  expect(result.equalsStartingNumber).toBe(false);
-});
-
-test("followElfDirection R0 returns the same number and true for equalsStartingNumber", () => {
-  const result = followElfDirection("R0", 50);
-  expect(result.newNumber).toBe(50);
-  expect(result.equalsStartingNumber).toBe(true);
 });
 
 // Tests for countZerosSpinningLeft

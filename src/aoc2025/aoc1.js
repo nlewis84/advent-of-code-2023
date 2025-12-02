@@ -11,8 +11,8 @@ function unwrapElfNote(instruction) {
 function spinTheDial(instruction, currentNumber) {
   const { direction, amount } = unwrapElfNote(instruction);
 
-  // Apply the operation (R = increase, L = decrease)
-  // Dial wraps around 0-99, so use modulo 100
+  // Spin the dial: R means turn increase, L means turn decrease
+  // The dial wraps around, so going past 99 loops back to 0, and going below 0 loops to 99
   let newNumber;
   if (direction === "R") {
     newNumber = currentNumber + amount;
@@ -22,33 +22,18 @@ function spinTheDial(instruction, currentNumber) {
     return currentNumber;
   }
 
-  // Modulo 100, and handle negative numbers
+  // Modulo 100 and handle negative numbers
   return ((newNumber % 100) + 100) % 100;
-}
-
-function followElfDirection(instruction, startingNumber) {
-  // Process the instruction and get the new number
-  const newNumber = spinTheDial(instruction, startingNumber);
-
-  // Check if new number equals starting number
-  const equalsStartingNumber = newNumber === startingNumber;
-
-  // Return object with newNumber and equalsStartingNumber
-  return {
-    newNumber: newNumber,
-    equalsStartingNumber: equalsStartingNumber,
-  };
 }
 
 function countZerosSpinningLeft(startPos, amount) {
   let count = 0;
-  // Going left: we're at 0 when (startPos - i) mod 100 = 0 for i in [1, amount-1]
-  // This means i ≡ startPos (mod 100)
-  // First occurrence: i0 = startPos (if startPos > 0 and startPos < amount)
-  // Then i = startPos + k*100 for k such that 1 ≤ i ≤ amount-1
+  // When spinning left, we'll pass through the North Pole (0) at certain steps
+  // We check every 100 steps starting from our starting position
+  // For example, if we start at 50 and spin left 52 clicks, we'll hit 0 at step 50
   for (let i = startPos; i < amount; i += 100) {
     if (i > 0 && i < amount) {
-      // Check if this position would be at 0
+      // Calculate where we'd be at this step and see if we're at the North Pole
       const pos = (((startPos - i) % 100) + 100) % 100;
       if (pos === 0) {
         count++;
@@ -60,13 +45,14 @@ function countZerosSpinningLeft(startPos, amount) {
 
 function countZerosSpinningRight(startPos, amount) {
   let count = 0;
-  // Going right: we're at 0 when (startPos + i) mod 100 = 0 for i in [1, amount-1]
-  // This means i ≡ -startPos (mod 100), i.e., i ≡ (100 - startPos) mod 100
-  // First occurrence: i0 = (100 - startPos) mod 100 (if > 0, else 100)
+  // When spinning right, we'll pass through the North Pole (0) at certain steps
+  // First, figure out how many clicks it takes to reach 0 from our starting position
+  // For example, if we start at 95, it takes 5 clicks to reach 0
   let firstZero = (100 - (startPos % 100)) % 100;
   if (firstZero === 0) firstZero = 100;
 
-  // Count all occurrences: firstZero, firstZero + 100, firstZero + 200, ... up to amount-1
+  // Then count every time we'd hit 0 during the spin (every 100 clicks after the first)
+  // So if we spin 1000 clicks from 50, we'll hit 0 at steps 50, 150, 250, ... 950
   for (let i = firstZero; i < amount; i += 100) {
     if (i > 0 && i < amount) {
       count++;
@@ -96,7 +82,7 @@ function part1(lines) {
   let currentNumber = startingNumber;
   let dialPointsAtZero = 0;
 
-  // Process each instruction
+  // Follow each elf instruction and count how many times we end up at the North Pole
   for (const line of lines) {
     currentNumber = spinTheDial(line, currentNumber);
     if (isAtTheNorthPole(currentNumber)) {
@@ -112,19 +98,18 @@ function part2(lines) {
   let currentNumber = startingNumber;
   let pointsAtZeroDuring = 0;
 
-  // Process each instruction
+  // Follow each elf instruction and count ALL times we're at the North Pole
+  // This includes both during the spin AND at the end of each spin
   for (const line of lines) {
-    if (line.trim() === "") continue; // Skip empty lines
-
     const startPos = currentNumber;
 
-    // Count how many times the dial is at 0 DURING the rotation
+    // Count how many times we pass through the North Pole while spinning
     pointsAtZeroDuring += countZerosWhileSpinning(line, startPos);
 
-    // Update current number after instruction
+    // Complete the spin and see where we end up
     currentNumber = spinTheDial(line, currentNumber);
 
-    // Also count if the dial ends at 0 (at the end of rotation)
+    // If we end up at the North Pole, count that too
     if (isAtTheNorthPole(currentNumber)) {
       pointsAtZeroDuring++;
     }
@@ -143,7 +128,6 @@ module.exports = {
   part2,
   unwrapElfNote,
   spinTheDial,
-  followElfDirection,
   countZerosSpinningLeft,
   countZerosSpinningRight,
   countZerosWhileSpinning,
