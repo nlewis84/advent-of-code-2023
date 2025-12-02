@@ -207,20 +207,12 @@ test("isRepeatingPatternAtLeastTwice returns false for 12", () => {
 
 // Tests for findInvalidIdsInRange with Part 2 validation
 test("findInvalidIdsInRange finds 11 and 22 in range 11-22 (Part 2)", () => {
-  const result = findInvalidIdsInRange(
-    11,
-    22,
-    isRepeatingPatternAtLeastTwice
-  );
+  const result = findInvalidIdsInRange(11, 22, isRepeatingPatternAtLeastTwice);
   expect(result).toEqual([11, 22]);
 });
 
 test("findInvalidIdsInRange finds 99 and 111 in range 95-115 (Part 2)", () => {
-  const result = findInvalidIdsInRange(
-    95,
-    115,
-    isRepeatingPatternAtLeastTwice
-  );
+  const result = findInvalidIdsInRange(95, 115, isRepeatingPatternAtLeastTwice);
   expect(result).toEqual([99, 111]);
 });
 
@@ -304,4 +296,3 @@ test("findInvalidIdsInRange finds 2121212121 in range 2121212118-2121212124 (Par
   );
   expect(result).toEqual([2121212121]);
 });
-
